@@ -1,0 +1,27 @@
+<div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 login-page-wrapper" style="background: url('/assets/images/login.svg') center center no-repeat, linear-gradient(93.59deg, #36364C 19.75%, #505071 81.94%);">
+  <div class="login-form-wrapper p-4">
+    <h2 class="mb-5 text-center">Forgot Password?</h2>
+      {{$flashes := .Flashes}}
+      {{if $flashes}}
+        <ul>
+          {{range $flash := $flashes}}
+            <li>{{$flash.Message}}</li>
+          {{end}}
+        </ul>
+      {{end}}
+      {{$url := AuthURL "password/recover"}}
+    <form action={{$url}} method="post" class="mb-5">
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" name="email" class="form-control" placeholder="Your Email *" value="" required />
+        <input type="hidden" name="origin" value="form">
+      </div>
+      <div class="form-group text-center">
+        <input type="submit" name="submit" class="btn btn-primary" value="Reset" />
+      </div>
+      <div class="form-group mt-4 text-center">
+        <a class="forgot-password breadcrumb-link" href="{{AuthURL "password/login"}}">Log in</a>
+      </div>
+    </form>
+  </div>
+</div> 
