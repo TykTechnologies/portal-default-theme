@@ -86,6 +86,14 @@ function Toggle({element, onChange, index, contentWrapper, stepsSelector, conten
     stepsCollection?.forEach(s => {
       s.classList.remove('active');
       stepsCollection[stepIndex].classList.add('active');
+      let footer = document.querySelector("footer");
+      let activeTab = stepsCollection[stepIndex];
+      let redoc = document.getElementById("redoc-wrapper");
+      if (activeTab && activeTab.innerHTML != "API SPECIFICATIONS") {
+        footer.style.marginTop = "0px";
+      }else if (activeTab && activeTab.innerHTML == "API SPECIFICATIONS" && redoc){
+        footer.style.marginTop = redoc.clientHeight + "px";
+      }
     });
     if (stepIndex > 0) {
       SetMarkdownContent(`set-markdown-content-${stepIndex}`);
@@ -131,14 +139,14 @@ export function HandleApiSpecSelect({selectorId, downloadSelectorId, displaySele
   let tmplIsRedoc = isRedoc(oasTemplate);
   let url = getURLValue(docURL);
   if (selector && isOAS(url) &&  tmplIsRedoc) {
-    Redoc?.init(url)
+    initRedoc(url);
   } 
   selector?.addEventListener('change', (e) => {
     let [apiID, ...docURL] = e.target.value.split("-");
     let url = getURLValue(docURL);
     downloadSelector.action = `${path}/${apiID}/docs/download`;
     if (tmplIsRedoc && isOAS(url)) {
-      Redoc?.init(url) 
+      initRedoc(url);
       return
     }
     let elementsApi = document.createElement('elements-api');
@@ -160,4 +168,19 @@ export function SetMarkdownContent(id) {
 		content.innerHTML = html;
     content.setAttribute("converted", "true");
 	}
+}
+
+function initRedoc(url) {
+  let wrapper = document.getElementById("redoc-wrapper");
+  if (Redoc) {
+    Redoc.init(url, { 
+      scrollYOffset: ".navbar",
+    }, wrapper, (redoc) => {
+      let footer = document.querySelector("footer");
+      let activeTab = document.querySelector(".step.active.tab");
+      if (activeTab?.innerHTML == "API SPECIFICATIONS") {
+        footer.style.marginTop = wrapper.clientHeight + "px";
+      }
+    })
+  }
 }

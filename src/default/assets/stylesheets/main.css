@@ -139,7 +139,3 @@ body {
 .container {
   max-width: 1230px;
 }
-
-html {
-  scroll-behavior: smooth;
-}

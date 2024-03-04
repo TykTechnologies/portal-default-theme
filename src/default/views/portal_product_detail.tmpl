@@ -25,7 +25,6 @@
 	{{ if .errors }}
 	<div class="alert alert-danger" role="alert">
 	    {{ range $category, $messages := .errors }}
-            {{$category}}
             <i class="tyk-icon tykon tykon-warning "></i>
             {{ range $i, $message := $messages }}
             <br/>
@@ -315,8 +314,9 @@
 		    </div>
 		</div>
 		{{if eq $oas_template $redoc}}
+		<div id="redoc-wrapper">
 			<redoc hide-download-button></redoc>
-			<script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
+		</div>
 		{{else}}
 		<div id="oas-display-stoplight">
 			<elements-api apiDescriptionUrl="{{$initialAPIOasUrl}}" router="hash" layout="sidebar" hideExport="true"/>

@@ -440,3 +440,7 @@
   color: var(--tdp-text-color);
   font-family: 'OpenSans-Regular'!important;
 }
+#redoc-wrapper{
+  position: absolute;
+  width: 100%;
+}

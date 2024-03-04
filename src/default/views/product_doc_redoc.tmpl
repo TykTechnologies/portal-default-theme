@@ -11,7 +11,7 @@
   </div>
   <div>
     {{ if gt (.Url | length) 0}}
-    <redoc spec-url='{{.Url}}'></redoc>
+    <redoc spec-url='{{.Url}}' scroll-y-offset='.navbar'></redoc>
     {{ else }}
     <h1>No swagger doc set for this API</h1>
     {{ end }}
