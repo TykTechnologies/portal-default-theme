@@ -114,27 +114,35 @@ function handleContent(element, content) {
   }
   element.appendChild(content);
 }
+function getURLValue(urlArr) {
+  if (urlArr.length > 1 ) {
+    return urlArr.join("-");
+  }
+  return urlArr[0];
+}
+
 export function HandleApiSpecSelect({selectorId, downloadSelectorId, displaySelectorId}) {
   let selector = document.getElementById(selectorId);
   let downloadSelector = document.getElementById(downloadSelectorId);
   let displaySelector = document.getElementById(displaySelectorId);
   let oasTemplate = selector?.getAttribute("data-template");
   let path = downloadSelector?.getAttribute("data-path");
-  let value = selector?.value.split("-");
+  let [, ...docURL] = selector && selector.value ? selector.value.split("-") : [];
   let tmplIsRedoc = isRedoc(oasTemplate);
-  if (selector && isOAS(value[1]) &&  tmplIsRedoc) {
-    Redoc?.init(value[1])
+  let url = getURLValue(docURL);
+  if (selector && isOAS(url) &&  tmplIsRedoc) {
+    Redoc?.init(url)
   } 
-
   selector?.addEventListener('change', (e) => {
-    let value = e.target.value.split("-");
-    downloadSelector.action = `${path}/${value[0]}/docs/download`;
-    if (tmplIsRedoc && isOAS(value[1])) {
-      Redoc?.init(value[1]) 
+    let [apiID, ...docURL] = e.target.value.split("-");
+    let url = getURLValue(docURL);
+    downloadSelector.action = `${path}/${apiID}/docs/download`;
+    if (tmplIsRedoc && isOAS(url)) {
+      Redoc?.init(url) 
       return
     }
     let elementsApi = document.createElement('elements-api');
-    elementsApi.setAttribute('apiDescriptionUrl', value[1]);
+    elementsApi.setAttribute('apiDescriptionUrl', url);
     elementsApi.setAttribute('router', 'hash');
     elementsApi.setAttribute('layout', 'sidebar');
     elementsApi.setAttribute('hideExport', 'true');
