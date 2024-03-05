@@ -130,7 +130,6 @@
   max-width: 274px;
   max-height: 166px;
   cursor: pointer;
-  overflow: scroll;
 }
 .labeled-card:hover {
   background: var(--tdp-light-gray);
@@ -286,9 +285,9 @@
 .api-description-text{
   min-width: 255px;
   max-width: 255px;
-  max-height: 30px;
-  min-height: 30px;
-  overflow: scroll;
+  overflow-x: hidden;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .step-wrapper-api-docs{
@@ -439,4 +438,8 @@
 .product-doc-menu {
   color: var(--tdp-text-color);
   font-family: 'OpenSans-Regular'!important;
+}
+#redoc-wrapper{
+  position: absolute;
+  width: 100%;
 }

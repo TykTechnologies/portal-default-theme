@@ -1,5 +1,5 @@
 import { SortBy } from './components/sorting.js';
-import { Interactive, HandleApiSpecSelect, SetMarkdownContent } from './components/interactive.js';
+import { Interactive, HandleApiSpecSelect, SetMarkdownContent, HandleTruncateText } from './components/interactive.js';
 import { onProductFormSubmit, onAppFormSubmit, handleTLSCertificate } from './components/submit-form.js';
 import { fromSearch, fromButton } from './components/set-element-value.js';
 import { decoratePasswordReveal } from './components/decorate-password-reveal.js';
@@ -102,6 +102,8 @@ SelectMultiple({
 SelectMultipleInput("response-codes-traffic-chart");
 SelectMultipleInput("response-codes-error-rate-chart");
 
+HandleTruncateText(".product-api-details", ".api-description-text", "data-description");
+
 /* Enable Bootstrap tooltips */
 $(function() {
 	$('[data-toggle="tooltip"]').tooltip()
@@ -158,9 +160,9 @@ OnChangeHandlerForFilters("analytics-overview-select-apps", OnChangeHandlerOverv
 OnChangeHandlerForFilters("error-rate-statistics", OnChangeHandlerStatisticsErrorRate);
 OnChangeHandlerForFilters("latency-time-unit", OnChangeHandlerLatencyTimeUnit);
 ExportCSV({chartID: "traffic-chart", buttonID: "traffic-chart-csv", filename: "api-calls.csv"});
-ExportCSV({chartID: "traffic-chart", buttonID: "traffic-chart-csv", filename: "api-calls.csv"});
+ExportCSV({chartID: "error-rate-chart", buttonID: "error-rate-chart-csv", filename: "error-rates.csv"});
 ExportCSV({chartID: "hits-vs-errors-chart", buttonID: "hits-vs-errors-chart-csv", filename: "hits-vs-errors.csv"});
-ExportCSV({chartID: "error-rates-chart", buttonID: "error-rates-chart-csv", filename: "error-rates.csv"});
+ExportCSV({chartID: "error-rates-chart", buttonID: "error-rates-chart-csv", filename: "error-rates-api.csv"});
 ExportCSV({chartID: "error-breakdown-chart", buttonID: "error-breakdown-chart-csv", filename: "error-breakdown.csv"});
 ExportCSV({chartID: "latency-chart", buttonID: "latency-chart-csv", filename: "latency.csv"});
 HandleCalendar("#analytics-date-picker");

@@ -1,5 +1,7 @@
 <!-- Main layout used to render all content pages -->
 
+{{ $pageTitle := PageTitle req }}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>{{ if .page}} {{.page.Title}} {{else}} Developer Portal {{end}}</title>
+    <title>{{ if $pageTitle}} {{ $pageTitle}} {{else}} {{ if .page}} {{.page.Title}} {{else}} Developer Portal {{end}} {{end}}</title>
     <!-- Google Tag Manager -->
     {{if IsFullstoryEnabled}}
       <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -21,10 +23,9 @@
     {{end}}
     <!-- End Google Tag Manager -->
     <!-- stoplight.io -->    
-    <script src="/assets/vendor/stoplight/elements/web-components.min.js"></script>
-    <link rel="stylesheet" href="/assets/vendor/stoplight/elements/styles.min.css">
-    <!-- <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script> --> 
-    <!-- <link rel="stylesheet" href=""> --> 
+    <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
     <!-- Load style assets -->
     <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">

@@ -25,7 +25,6 @@
 	{{ if .errors }}
 	<div class="alert alert-danger" role="alert">
 	    {{ range $category, $messages := .errors }}
-            {{$category}}
             <i class="tyk-icon tykon tykon-warning "></i>
             {{ range $i, $message := $messages }}
             <br/>
@@ -134,7 +133,7 @@
 		    <div class="api-product-page__info-description flex-column">
 			<div class="row m-0 justify-content-center">
 			    {{ range $index, $api := .product.APIDetails }}
-			    <div class="col-xl-3 labeled-card d-flex flex-column align-items-center {{if and (ge $index 0) (lt $index $lastApi)}}mr-35{{end}}">
+			    <div class="product-api-details col-xl-3 labeled-card d-flex flex-column align-items-center {{if and (ge $index 0) (lt $index $lastApi)}}mr-35{{end}}">
 				<div class="labeled-card__title mb-4">
 				    <h3 class="mb-0">{{ $api.Name }}</h3>
 				</div>
@@ -145,7 +144,7 @@
 				<div class="mt-12">
 				    {{if not (eq $api.Description "")}}
 				    <span class="m-0 text-open-sans-bold">Description:</span>
-				    <p class="api-description-text">{{ $api.Description }}</p>
+				    <p class="api-description-text text-regular-14" data-description="{{$api.Description}}">{{safe (TruncateString $api.Description 60)}}</p>
 				    {{end}}
 				</div>
 			    </div>
@@ -315,8 +314,9 @@
 		    </div>
 		</div>
 		{{if eq $oas_template $redoc}}
+		<div id="redoc-wrapper">
 			<redoc hide-download-button></redoc>
-			<script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
+		</div>
 		{{else}}
 		<div id="oas-display-stoplight">
 			<elements-api apiDescriptionUrl="{{$initialAPIOasUrl}}" router="hash" layout="sidebar" hideExport="true"/>
