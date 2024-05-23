@@ -19,10 +19,6 @@
   margin-bottom: 5px;
 }
 
-.partners-wrapper {
-  display: none;
-}
-
 .partners-wrapper__image-container {
   background: transparent;
   border-radius: var(--tdp-border-radius);
@@ -44,4 +40,12 @@
 .step-wrapper .step.active,
 .step-wrapper .step:hover {
   color: var(--tdp-link-color);
+}
+
+/** Hidden elements */
+.partners-wrapper {
+  display: none;
+}
+.featured-api-wrapper {
+  display: none;
 }
