@@ -72,6 +72,24 @@
 	color: white;
 }
 
+.portal-primary {
+	background-color: var(--action-brand-default);
+	color: white;
+	border: 1px solid var(--border-brand-default);
+	text-transform: none;
+	padding: 8px 16px;
+	font-family: Inter-Medium, sans-serif;
+}
+
+.portal-primary:focus,
+.portal-primary:hover,
+.portal-primary:not(:disabled):not(.disabled).active,
+.portal-primary:not(:disabled):not(.disabled):active {
+	background-color: var(--border-brand-default);
+	color: white;
+	border: 1px solid var(--border-brand-hover);
+}
+
 /* Secondary */
 .btn-secondary {
 	border: var(--tdp-secondary-btn-border);

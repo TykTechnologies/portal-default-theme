@@ -51,8 +51,6 @@ let certElements = {
 }
 onProductFormSubmit(elements);
 onAppFormSubmit('app-form');
-onAppFormSubmit('app-form-cert-update');
-onAppFormSubmit('app-form-cert-delete');
 onAppFormSubmit('user-form');
 handleTLSCertificate(certElements);
 

@@ -34,8 +34,13 @@ export function GetTrafficChartData({timeUnit, apps, updateTab, from, to, codes}
         const type = 'line';
         const options = {
             elements: {
-                point:{
-                    radius: 0
+                point: {
+                    radius: 4, // Increase point radius to make them visible
+                    hoverRadius: 6
+                },
+                line: {
+                    tension: 0, // Use straight lines between points
+                    spanGaps: false // Don't span gaps (treat zero values as data points)
                 }
             },
             scales: {
@@ -194,7 +199,7 @@ export function GetOverviewChartData(from, to, appID) {
                 },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
                     }
                 }
             }
@@ -214,7 +219,7 @@ export function GetOverviewChartData(from, to, appID) {
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
                     }
                 }
             }
@@ -494,8 +499,13 @@ export function GetErrorRateChartData({timeUnit, stats, apps, from, to, updateTa
         const type = 'line';
         const options = {
             elements: {
-                point:{
-                    radius: 0
+                point: {
+                    radius: 4, // Increase point radius to make them visible
+                    hoverRadius: 6
+                },
+                line: {
+                    tension: 0, // Use straight lines between points
+                    spanGaps: false // Don't span gaps (treat zero values as data points)
                 }
             },
             tooltips: {
@@ -518,6 +528,13 @@ export function GetErrorRateChartData({timeUnit, stats, apps, from, to, updateTa
                         font: {
                             size: 12,
                         }
+                    },
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 12,
+                        }
                     }
                 },
             },
@@ -532,7 +549,7 @@ export function GetErrorRateChartData({timeUnit, stats, apps, from, to, updateTa
                     position: "top",
                     align: "end"
                 },
-            }
+            },
         };
         buildChart(ctx, type, data.ErrorChart, options);
     }).catch((error) => console.error(`Could not fetch data: ${error}`));
@@ -574,8 +591,13 @@ export function GetLatencyChartData({timeUnit, apps, from, to, updateTab}) {
         const type = 'line';
         const options = {
             elements: {
-                point:{
-                    radius: 0
+                point: {
+                    radius: 4, // Increase point radius to make them visible
+                    hoverRadius: 6
+                },
+                line: {
+                    tension: 0, // Use straight lines between points
+                    spanGaps: false // Don't span gaps (treat zero values as data points)
                 }
             },
             tooltips: {
@@ -587,9 +609,12 @@ export function GetLatencyChartData({timeUnit, apps, from, to, updateTab}) {
                 intersect: true
             },
             scales: {
-                yAxes: [{
+                y: [{
                     ticks: {
-                        beginAtZero:true
+                        beginAtZero:true,
+                        font: {
+                            size: 12,
+                        }
                     }
                 }]
             },

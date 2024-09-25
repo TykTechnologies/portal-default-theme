@@ -63,11 +63,13 @@
   --tdp-tab-active: #EBEDF4;
   --tdp-light-green: #D7F8F3;
   --tdp-light-red: #FFD1CE;
+  --tdp-login-form: #F0F0F3D9;
   /* Text colors */
   --tdp-text-color: #505071;
   --tdp-link-color: #00D9BA;
   --tdp-nav-link-color: white;
   --tdb-text-color-dark: #31394D;
+  --tdp-text-color-extra-dark: #03031C;
   --tdb-text-color-gray: #808080;
   --tbd-text-colot-gray-mid: #4D4D4D;
   --tdb-text-color-gray-lighter: #868686;
@@ -76,7 +78,8 @@
   --tdp-border-color-on-error: #FF6C7D;
   --tdp-table-border-color: #C3C3E5;
   --tdp-border-radius: 20px;
-  --tdp-primary-border: 2px solid #00D9BA;
+  --tdp-login-form-border-radius: 8px;
+  --tdp-primary-border: 1px solid #03031C;
   --tdp-form-element-border: 2px solid #C3C3E5;
   --tpd-gray-200-border: 1px solid #DDDDDD;
   --tdp-border-graph: 2px solid #EFEEEB;
@@ -93,6 +96,10 @@
   --tdp-warning-btn-color: #D6B218;
   --tdp-warning-btn-border: 2px solid #C58C11;
   --tdp-warning-outline-btn-border: 2px solid #D6B218;
+  --action-brand-default: #335FFD;
+  --border-brand-default: #2A4DD0;
+  --border-brand-hover: #223EAC;
+  --link-default: #00A6ED;
   /* Alert boxes */
   --tdp-alert-success-bg-color: #CEFFF6;
   --tdp-alert-success-border-color: #3ECCBB;
@@ -109,6 +116,10 @@
   /* Icons */
   --tdp-icon-success-dark: #00B798;
   --default-border-radius: 18px;
+}
+
+html {
+  scroll-padding-top: 70px;
 }
 
 body {

@@ -1,6 +1,7 @@
 <!-- Main layout used to render all content pages -->
 
 {{ $pageTitle := PageTitle req }}
+{{ $isAuth := IsAuthPath req}}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -50,16 +51,25 @@
     </script>
 </head>
 
-  <body>
+  <body {{if $isAuth}}style="margin-top:0;padding:0;"{{end}}>
       <!-- Render top navigation menu -->
-      {{ render "top_nav" . }}
+      
+      {{if not $isAuth}}
+        {{ render "top_nav" . }}
+      {{end}}
 
       <!-- Render main page content -->
-      <div class="page-wrapper">
+      {{ if $isAuth }}
         {{ yield }}
-      </div>
+      {{else}}
+        <div class="page-wrapper">
+          {{ yield }}
+        </div>
+      {{end}}
       <!-- Render footer menu -->
-      {{ render "footer" . }}
+      {{if not $isAuth}}
+        {{ render "footer" . }}
+      {{end}}
 
   </body>
 
