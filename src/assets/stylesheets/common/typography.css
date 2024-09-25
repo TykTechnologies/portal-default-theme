@@ -87,6 +87,12 @@ p {
     line-height: 30px;
 }
 
+.title-inter {
+	font-family: Inter-Bold, sans-serif;
+	font-size: 32px;
+	line-height: 36px;
+}
+
 .text-regular-14 {
     font-family: "OpenSans-Regular";
     font-size: 14px;

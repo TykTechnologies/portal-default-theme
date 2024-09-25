@@ -27,6 +27,14 @@ a.breadcrumb-link:hover {
   font-family: 'OpenSans-Semibold';
 }
 
+a.brand-link,
+a.beand-link:hover {
+  color: var(--link-default);
+  font-family: Inter-Medium, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+
 .opensans-semibold {
   font-family: 'OpenSans-Semibold';
 }

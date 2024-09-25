@@ -21,9 +21,12 @@
   {{ end }}
 {{ end }}
 
-<div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 login-page-wrapper" style="background: url('/assets/images/login.svg') center center no-repeat, linear-gradient(93.59deg, #36364C 19.75%, #505071 81.94%);">
-  <div class="login-form-wrapper p-4">
-    <h2 class="mb-5 text-center">Create an account</h2>
+<div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 login-page-wrapper">
+  <a href="/" class="logo d-flex">
+    <img src="/assets/images/new-logo.svg" alt="Tyk Logo" />
+  </a>
+  <div class="login-form-wrapper">
+    <label class="title-inter login-form-title mt-3">Create an account</label>
     {{ if or .done .pending }}
       <div class="alert alert-{{ if .done }}success{{else}}info{{end}}" role="alert">
         {{ if .done }}
@@ -36,11 +39,11 @@
       </div>
       {{if .done}}
         <p class="text-center mt-4">
-          <a class="btn btn-primary" href="/auth/password/login">GO TO LOGIN</a>
+          <a class="btn portal-primary" href="/auth/password/login">GO TO LOG IN</a>
         </p>
       {{end}}
     {{ else }}
-      <form action="/auth/password/register{{ if .invite_id }}?token={{.invite_id}}{{ end }}" method="post" class="mb-5">
+      <form action="/auth/password/register{{ if .invite_id }}?token={{.invite_id}}{{ end }}" method="post" class="mb-3">
         {{if ne $genericError "" }}
           <div class="alert alert-danger" role="alert">
             <i class="tyk-icon tykon tykon-warning "></i>
@@ -48,47 +51,47 @@
           </div>
         {{end}}
         <div class="form-group">
-          <label class="form-label">Email address</label>
-          <input type="text" name="email" class="form-control {{if ne $errEmail "" }}has-error{{end}}" placeholder="Your Email *" value="{{ .email }}" />
+          <label class="form-label login-form-label mb-1">Email address</label>
+          <input type="text" name="email" class="form-control login-form-input {{if ne $errEmail "" }}has-error{{end}}"/>
           {{if ne $errEmail "" }}
             <p class="invalid-feedback d-block">{{ $errEmail }}</p>
           {{end}}
         </div>
         <div class="form-group">
-          <label class="form-label">First name</label>
-          <input type="text" name="first" class="form-control {{if ne $errFirst "" }}has-error{{end}}" placeholder="First *" value="{{ .first }}" />
+          <label class="form-label login-form-label mb-1">First name</label>
+          <input type="text" name="first" class="form-control login-form-input {{if ne $errFirst "" }}has-error{{end}}"/>
           {{if ne $errFirst "" }}
             <p class="invalid-feedback d-block">{{ $errFirst }}</p>
           {{end}}
         </div>
         <div class="form-group">
-          <label class="form-label">Last name</label>
-          <input type="text" name="last" class="form-control {{if ne $errLast "" }}has-error{{end}}" placeholder="Last *" value="{{ .last }}" />
+          <label class="form-label login-form-label mb-1">Last name</label>
+          <input type="text" name="last" class="form-control login-form-input {{if ne $errLast "" }}has-error{{end}}"/>
             {{if ne $errLast "" }}
               <p class="invalid-feedback d-block">{{ $errLast }}</p>
             {{end}}
         </div>
         <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" name="password1" class="form-control content-field {{if ne $errPassword1 "" }}has-error{{end}}" placeholder="Your Password *" value="{{ .password1 }}" autocomplete="off" />
+          <label class="form-label login-form-label mb-1">Password</label>
+          <input type="password" name="password1" class="form-control login-form-input content-field {{if ne $errPassword1 "" }}has-error{{end}}" autocomplete="off" />
           {{if ne $errPassword1 "" }}
             <p class="invalid-feedback d-block">{{ $errPassword1 }}</p>
           {{end}}
         </div>
         <div class="form-group">
-          <label class="form-label">Re-enter password</label>
-          <input type="password" name="password2" class="form-control content-field {{if ne $errPassword2 "" }}has-error{{end}}" placeholder="Confirm Password *" value="{{ .password2 }}" autocomplete="off" />
+          <label class="form-label login-form-label mb-1">Re-enter password</label>
+          <input type="password" name="password2" class="form-control login-form-input content-field {{if ne $errPassword2 "" }}has-error{{end}}" autocomplete="off" />
           {{if ne $errPassword2 "" }}
             <p class="invalid-feedback d-block">{{ $errPassword2 }}</p>
           {{end}}
         </div>
         <div class="form-group mb-4">
-          <label class="form-label"> Invite code
-            <span class="help-icon" data-toggle="tooltip" data-placement="right" title="When registering with an invite code you'd be assigned to a specific team and org within this developer portal.">
+          <label class="form-label login-form-label mb-1 d-flex align-items-center"> Invite code
+            <span class="help-icon mt-0 ml-1" data-toggle="tooltip" data-placement="right" title="When registering with an invite code you'd be assigned to a specific team and org within this developer portal.">
               <img src="../../assets/images/help.svg" >
             </span>
           </label>
-          <input type="text" name="invite_id" class="form-control" placeholder="Invite code" value="{{ .invite_id }}" {{ if .invite_id }} style="pointer-events: none;" {{ end }} />
+          <input type="text" name="invite_id" class="form-control login-form-input" {{ if .invite_id }} style="pointer-events: none;" {{ end }} />
         </div>
         {{if $customAttrs}}
           {{ range $attr := $customAttrs }}
@@ -136,10 +139,11 @@
           {{end}}
         {{end}}
         <div class="form-group text-center mt-4">
-          <input type="submit" name="submit" class="btn btn-primary" value="Register to developer portal" />
+          <input type="submit" name="submit" class="btn portal-primary" value="Register to developer portal" />
         </div>
         <div class="form-group text-center">
-          Already a member ? <a href="/auth/password/login" class="breadcrumb-link">Login.</a>
+          <span class="text-regular-14 login-form-label login-form-info">Already a member?</span>
+          <a href="/auth/password/login" class="brand-link login-form-label">Log in</a>
         </div>
       </form>
     {{ end }}

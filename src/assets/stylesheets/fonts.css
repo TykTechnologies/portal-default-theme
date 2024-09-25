@@ -67,3 +67,27 @@
   font-weight: 400;
   font-style: normal
 }
+
+@font-face {
+  font-family: Inter-Regular;
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/Inter-Regular.woff2') format('woff2'),
+    url('../fonts/Inter-Regular.woff') format('woff')
+}
+
+@font-face {
+  font-family: Inter-Bold;
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/Inter-Bold.woff2') format('woff2'),
+    url('../fonts/Inter-Bold.woff') format('woff')
+}
+
+@font-face {
+  font-family: Inter-Medium;
+  src: url('../fonts/Inter-Medium.woff2') format('woff2'),
+       url('../fonts/Inter-Medium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
