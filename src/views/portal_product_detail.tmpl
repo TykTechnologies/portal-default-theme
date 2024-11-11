@@ -9,6 +9,7 @@
 {{ $initialAPI := index $thisProduct.APIDetails 0}}
 {{ $initialAPIOasUrl := ""}}
 {{ $initialAPIID := ""}}
+{{ $initialTemplate := ""}}
 {{ range $thisProduct.APIDetails }}
 	{{ $oasfile := gt (.OASDocument.Base.Url | trim | length) 0 }}
 	{{ $oasurl := gt (.OASUrl | trim | length) 0 }}
@@ -17,6 +18,7 @@
 	{{ end }}
 {{ end }}
 {{ $redoc := "product_doc_redoc" }}
+{{ $asyncapi := "product_doc_asyncapi" }}
 
 <div class="api-product-page-wrapper">
     <div class="container">
@@ -139,7 +141,7 @@
 				    <h3 class="mb-0">{{ $api.Name }}</h3>
 				</div>
 				<div>
-				    <p class="text-regular-14 listen-path-text"> Listen path: 
+				    <p class="text-regular-14 listen-path-text"> Listen path:
 					<span class="text-open-sans-semibold">{{ $api.ListenPath }}</span></p>
 				</div>
 				<div class="mt-12">
@@ -190,7 +192,7 @@
                                     </form>
                                     {{end}}
                                     {{else}}
-                                    <button type="button" class="access-with-plan" data-toggle="modal" data-target="#selectCatalogueForPlan{{$plan_id}}">ACCESS WITH THIS PLAN</button>   
+                                    <button type="button" class="access-with-plan" data-toggle="modal" data-target="#selectCatalogueForPlan{{$plan_id}}">ACCESS WITH THIS PLAN</button>
                                     <form method="post" id="add-to-cart-form-b">
 					<div class="modal fade" id="selectCatalogueForPlan{{$plan_id}}" tabindex="-1" role="dialog" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -240,7 +242,7 @@
 		    </div>
 		</div>
 		{{end}}
-		
+
 		<!-- Related Blog posts -->
 		{{if .posts}}
 		<div class="api-product-page__info">
@@ -258,7 +260,7 @@
 							{{$post_id := .ID}}
 							<div class="col-xl-3 shadow-lg labeled-card-post {{if and (ge $index 0) (lt $index $lastPost)}}mr-4{{end}} mb-3">
 								<div class="text-uppercase text-regular-16 m-0 product-post-header">
-									{{.CreatedAt | date "2 Jan, 2006" }} - {{.Author.DisplayName}} 
+									{{.CreatedAt | date "2 Jan, 2006" }} - {{.Author.DisplayName}}
 								</div>
 								<div class="mt-20">
 									<h2 class="title-h2-bold dark labeled-card-post-title">{{.Title}}</h2>
@@ -278,7 +280,7 @@
 		    </div>
 		</div>
 		{{end}}
-		<!-- End Related blog posts -->		
+		<!-- End Related blog posts -->
             </div>
 	</div>
 	<div>
@@ -287,9 +289,8 @@
 		<div class="container api-product-page_spec">
 		    <p>Select an API</p>
 		    <div class="d-flex flex-row justify-content-between align-items-center mt-1 mb-5 pb-3">
-				{{$oas_template := ProductDocRenderer}}
-				<select data-template="{{$oas_template}}" id="OasApiSelect">
-					{{ range $index, $api_detail := $thisProduct.APIDetails }} 
+				<select id="OasApiSelect">
+					{{ range $index, $api_detail := $thisProduct.APIDetails }}
 						{{ $oasfile := gt ($api_detail.OASDocument.Base.Url | trim | length) 0 }}
 						{{ $oasurl := gt ($api_detail.OASUrl | trim | length) 0 }}
 						{{ if or $oasfile $oasurl }}
@@ -299,28 +300,64 @@
 							{{else}}
 								{{$url = .OASUrl}}
 							{{end}}
-							<option value="{{$api_detail.APIID}}-{{$url}}">{{$api_detail.Name}}</option>
+							{{$template := ProductDocTemplate req $thisProduct.Path $api_detail.APIID }}
+							<option value="{{$api_detail.APIID}}-{{$url}}" data-template="{{$template}}">{{$api_detail.Name}}</option>
 							{{if eq $initialAPIOasUrl ""}}{{ $initialAPIOasUrl = $url }}{{end}}
 							{{if eq $initialAPIID ""}}{{ $initialAPIID = $api_detail.APIID }}{{end}}
+							{{if eq $initialTemplate ""}}{{ $initialTemplate = $template }}{{end}}
 						{{end}}
 					{{end}}
 				</select>
 				<div class="oas-display-content-download-button">
 					<form name="oas_form" method="get" data-path="/portal/catalogue-products/{{$thisProduct.Path}}" id="display-download-button" action="/portal/catalogue-products/{{$thisProduct.Path}}/{{$initialAPIID}}/docs/download">
-					<button class="download-oas-button" type="submit">DOWNLOAD OAS SPEC</button>
+					<button class="download-oas-button" type="submit">DOWNLOAD SPEC</button>
 					</form>
 				</div>
 		    </div>
 		</div>
-		{{if eq $oas_template $redoc}}
-		<div id="redoc-wrapper">
-			<redoc hide-download-button></redoc>
-		</div>
-		{{else}}
-		<div id="oas-display-stoplight">
-			<elements-api apiDescriptionUrl="{{$initialAPIOasUrl}}" router="hash" layout="responsive" hideExport="true"/>
-		</div>
-		{{end}}
+
+        <div id="api_doc_wrapper">
+		{{if eq $initialTemplate $redoc}}
+            <div id="redoc-wrapper">
+            <redoc hide-download-button></redoc>
+            </div>
+        {{else if eq $initialTemplate $asyncapi}}
+            <div id="asyncapi"></div>
+
+            <script>
+                AsyncApiStandalone.render({
+                    schema: {
+                        url: '{{$initialAPIOasUrl}}',
+                        options: { method: "GET", mode: "cors" },
+                    },
+                    config: {
+                        "show": {
+                            "sidebar": false,
+                            "info": true,
+                            "operations": true,
+                            "servers": true,
+                            "messages": true,
+                            "schemas": true,
+                            "errors": true
+                        },
+                        "expand":{
+                            "messageExamples": false
+                        },
+                        "sidebar": {
+                            "showServers": "byDefault",
+                            "showOperations": "byDefault"
+                        }
+                        },
+                    },
+                    document.getElementById('asyncapi')
+                );
+            </script>
+        {{else}}
+        <div id="oas-display-stoplight">
+        <elements-api apiDescriptionUrl="{{$initialAPIOasUrl}}" router="hash" layout="responsive" hideExport="true"/>
+        </div>
+        {{end}}
+        </div>
 		{{else}}
 		<div class="container">
 		    <div class="alert alert-warning mt-5" role="alert">
@@ -333,7 +370,7 @@
 		{{end}}
 	    </div>
 
-	    
+
 	    <div class="content-wrapper__content d-none container">
 		{{if gt (len $thisProduct.Docs) 0}}
 		<div class="container d-flex d-row mt-60">
@@ -368,7 +405,7 @@
 		</div>
 		{{end}}
 	    </div>
-	       
+
 	</div>
     </div>
     <div class="d-none" id="success-msg">Value has been copied successfully</div>
