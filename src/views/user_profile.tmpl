@@ -94,6 +94,10 @@
             </div>
             {{if $user.IsPasswordProvider}}
               <div class="mb-4">
+                <label class="form-label">Current password:</label>
+                <input autocomplete="new-password" type="password" name="current_password" class="form-control" placeholder="Your current Password *" value=""/>
+              </div>
+              <div class="mb-4">
                 <label class="form-label">New password:</label>
                 <input autocomplete="new-password" type="password" name="password1" class="form-control" placeholder="Your Password *" value=""/>
               </div>
