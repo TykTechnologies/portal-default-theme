@@ -60,13 +60,17 @@
         {{ $productPath := .Path }}
         {{ $productLogo := .Logo.URL }}
         {{ $hasDocs := false }}
-        {{ range .APIDetails }}
-          {{ $oasfile := gt (.OASDocument.Base.Url | trim | length) 0 }}
-          {{ $oasurl := gt (.OASUrl | trim | length) 0 }}
-          {{ if or $oasfile $oasurl }}
-            {{ $hasDocs = true }}
-          {{end}}
-        {{ end }}
+        {{ if .IsDocumentationOnly}}
+          {{ $hasDocs = true }}
+        {{else}}
+          {{ range .APIDetails }}
+            {{ $oasfile := gt (.OASDocument.Base.Url | trim | length) 0 }}
+            {{ $oasurl := gt (.OASUrl | trim | length) 0 }}
+            {{ if or $oasfile $oasurl }}
+              {{ $hasDocs = true }}
+            {{end}}
+          {{ end }}
+        {{end}}
           <div class="col-lg-12 card-container">
             <div class="card d-flex flex-row {{ if $productLogo }}has-logo{{end}}">
             {{ if $productLogo }}
@@ -93,15 +97,29 @@
                       Docs
                     </button>
                     <div class="view-docs-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      {{ range .APIDetails }}
-                        {{ $oasfile := gt (.OASDocument.Base.Url | trim | length) 0 }}
-                        {{ $oasurl := gt (.OASUrl | trim | length) 0 }}
-                        {{ if or $oasfile $oasurl }}
-                          <a href="/portal/catalogue-products/{{$productPath}}/{{.APIID}}/docs" target="_blank">
-                            <p class="docs-link">
-                              {{ .Name }}
-                            </p>
-                          </a>
+                      {{ if .IsDocumentationOnly}}
+                        {{ range .SpecDetails }}
+                          {{ $oasfile := gt (.OASDocument.Base.Url | trim | length) 0 }}
+                          {{ $oasurl := gt (.OASUrl | trim | length) 0 }}
+                          {{ if or $oasfile $oasurl }}
+                            <a href="/portal/catalogue-products/{{$productPath}}/{{.SpecAlias}}/docs" target="_blank">
+                              <p class="docs-link">
+                                {{ .SpecAlias }}
+                              </p>
+                            </a>
+                          {{ end }}
+                        {{ end }}
+                      {{else}}
+                        {{ range .APIDetails }}
+                          {{ $oasfile := gt (.OASDocument.Base.Url | trim | length) 0 }}
+                          {{ $oasurl := gt (.OASUrl | trim | length) 0 }}
+                          {{ if or $oasfile $oasurl }}
+                            <a href="/portal/catalogue-products/{{$productPath}}/{{.APIID}}/docs" target="_blank">
+                              <p class="docs-link">
+                                {{ .Name }}
+                              </p>
+                            </a>
+                          {{ end }}
                         {{ end }}
                       {{ end }}
                     </div>

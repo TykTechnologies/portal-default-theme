@@ -55,6 +55,9 @@ export function onProductFormSubmit(elements) {
   init();
 }
 
+// Deprecated - if you want to still use this, you will need to add the following header:
+// Content-Type: application/json
+// 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
 export function onAppFormSubmit(formId) {
   let appForm = document.getElementById(formId);
   const removeIrrelevantModes = (data) => {
