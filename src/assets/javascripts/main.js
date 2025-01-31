@@ -50,8 +50,6 @@ let certElements = {
 	certName: 'certificate-name'
 }
 onProductFormSubmit(elements);
-onAppFormSubmit('app-form');
-onAppFormSubmit('user-form');
 handleTLSCertificate(certElements);
 
 /* Password decoration */
