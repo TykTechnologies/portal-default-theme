@@ -42,7 +42,19 @@
               <label class="form-label">Description:</label>
               <textarea rows="3" name="description" class="form-control" placeholder="App Description"></textarea>
             </div>
-            <div class="row">
+            {{ if not .isDefaultOrgUser }}
+            <div class="row mb-4">
+              <label class="form-label">Visibility:</label>
+              <select name="visibility" class="form-control">
+                <option value="personal">Personal</option>
+                <option value="team">Team</option>
+                <option value="organisation" selected>Organisation</option>
+              </select>
+            </div>
+            {{ else }}
+            <input type="hidden" name="visibility" value="personal" />
+            {{ end }}
+            <div class="row mb-4">
               <label class="form-label">Redirect URLs:</label>
               <input name="redirectURLs" class="form-control" placeholder="Redirect URLs"/>
               <small id="redirectHelp" class="form-text with-info-icon">Separate URLs with commas</small>

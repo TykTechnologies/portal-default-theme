@@ -20,7 +20,7 @@
 {{ $initialTemplate := ""}}
 {{ if $thisProduct.IsDocumentationOnly}}
 	{{ $hasDocs = true}}
-	
+
 {{else}}
 	{{ range $thisProduct.APIDetails }}
 		{{ $oasfile := gt (.OASDocument.Base.Url | trim | length) 0 }}
@@ -322,7 +322,7 @@
 							{{if eq $initialTemplate ""}}{{ $initialTemplate = $template }}{{end}}
 						{{end}}
 					{{end}}
-					{{else}}	
+					{{else}}
 						{{ range $index, $api_detail := $thisProduct.APIDetails }}
 							{{ $oasfile := gt ($api_detail.OASDocument.Base.Url | trim | length) 0 }}
 							{{ $oasurl := gt ($api_detail.OASUrl | trim | length) 0 }}
@@ -349,13 +349,18 @@
 				</div>
 		    </div>
 		</div>
-
+        {{ if $thisProduct.WebhooksEnabled }}
+        	{{ $oas_template = $asyncapi }}
+        {{ end }}
         <div id="api_doc_wrapper">
 		{{if eq $initialTemplate $redoc}}
             <div id="redoc-wrapper">
             <redoc hide-download-button></redoc>
             </div>
         {{else if eq $initialTemplate $asyncapi}}
+            <script src="https://unpkg.com/@asyncapi/react-component@latest/browser/standalone/index.js"></script>
+            <link rel="stylesheet" href="https://unpkg.com/@asyncapi/react-component@latest/styles/default.min.css">
+
             <div id="asyncapi"></div>
 
             <script>

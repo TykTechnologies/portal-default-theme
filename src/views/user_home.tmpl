@@ -40,6 +40,7 @@
                 <tr>
                   <th>Name</th>
                   <th>Description</th>
+                  <th>Visibility</th>
                   <th>Date Created</th>
                   <th class="actions-cell">Action</th>
                 </tr>
@@ -52,6 +53,7 @@
                           <a class="breadcrumb-link" href="apps/{{ $c.ID }}">{{$c.Name}}</a>
                         </td>
                         <td> {{ if .Description }} {{ .Description}} {{else}} <i>No description set</i> {{end}}</td>
+                        <td>{{ .Visibility }}</td>
                         <td>{{.CreatedAt | date "2 Jan, 2006 15:04" }}</td>
                         <td>
                           <div class="dropdown text-center">
