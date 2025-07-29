@@ -5,6 +5,7 @@
 {{ $templates := .templates}}
 {{ $certs := .certs}}
 {{ $authType := ""}}
+{{ $isDefaultOrgUser := .isDefaultOrgUser}}
 
 <div class="cart-wrapper">
   <div class="container mt-5">
@@ -128,11 +129,24 @@
                     </div>
                     <div class="content-wrapper">
                       <div class="content-wrapper__content d-block mt-3">
-                         <div class="mb-3">
+                        <div class="mb-3">
                           <label class="form-label">App name</label>
                           <input type="text" name="client_name" class="form-control" placeholder="App Name"/>
                           <small id="clientHelp" class="form-text with-info-icon"> Make sure it is a descriptive name</small>
                         </div>
+                        {{ if not $isDefaultOrgUser }}
+                        <div class="mb-3">
+                          <label class="form-label">Visibility</label>
+                          <select name="client_visibility" class="form-control">
+                            <option value="organisation" selected>Organisation (default)</option>
+                            <option value="team">Team</option>
+                            <option value="personal">Personal</option>
+                          </select>
+                          <small class="form-text text-muted">Controls who can see and use this app.</small>
+                        </div>
+                        {{ else }}
+                        <input type="hidden" name="client_visibility" value="personal" />
+                        {{ end }}
                         <div class="mb-3">
                           <label class="form-label">Description</label>
                           <textarea rows="3" name="description" class="form-control" placeholder="App Description"></textarea>
@@ -173,6 +187,19 @@
                           <input type="text" name="client_name" class="form-control" placeholder="App Name"/>
                           <small id="clientHelp" class="form-text with-info-icon"> Make sure it is a descriptive name</small>
                         </div>
+                        {{ if not $isDefaultOrgUser }}
+                        <div class="mb-3">
+                          <label class="form-label">Visibility</label>
+                          <select name="client_visibility" class="form-control">
+                            <option value="organisation" selected>Organisation (default)</option>
+                            <option value="team">Team</option>
+                            <option value="personal">Personal</option>
+                          </select>
+                          <small class="form-text text-muted">Controls who can see and use this app.</small>
+                        </div>
+                        {{ else }}
+                        <input type="hidden" name="client_visibility" value="personal" />
+                        {{ end }}
                         <div class="mb-3">
                           <label class="form-label">Description</label>
                           <textarea rows="3" name="description" class="form-control" placeholder="App Description"></textarea>

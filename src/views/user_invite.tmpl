@@ -30,12 +30,12 @@
         </div>
       {{ end }}
       <div class="user-invite-title-wrapper">
-        <div class="col-md-10">
+        <div>
           <h2 class="users-main-title">Invite a new User</h2>
           <p>Please fill in the details of the new user and assign a role, an invitation email will be sent with a registration link.</p>
         </div>
 
-        <div class="card">
+        <div class="card p-2">
           <div class="row mb-4">
             <div class="col-6">
               <label class="form-label">Name:</label>
@@ -47,23 +47,62 @@
             </div>
           </div>
           <div class="row mb-4">
-            <div class="col-6">
+            <div class="col-12">
               <label class="form-label">Email:</label>
               <input class="form-control" name="email" value="{{.email}}" placeholder="Email" required/>
             </div>
-            <div class="col-6 selection">
-              {{ $roles := GetUserInvitationRoles }}
-              {{ if $roles }}
-                <label class="form-label">Role:</label>
-                <select class="form-control" id="selectRolesId" name="role" required>
-                  {{ range $role := $roles }}
-                    <option value="{{ $role.ID }}">{{ $role.DisplayName }}</option>
-                  {{ end }}
-                </select>
-              {{ end }}
-            </div>
           </div>
-          {{ render "role_detail" . }}
+
+            <div class="mb-4">
+              <div class="col-12 selection">
+                {{ $roles := GetUserInvitationRoles }}
+                {{ if $roles }}
+                  <label class="form-label">Role:</label>
+                  <div class="row">
+                    {{ range $role := $roles }}
+                      <div class="col-6">
+                        <div class="form-check d-flex align-items-center">
+                          <input
+                            class="form-check-input me-2"
+                            type="radio"
+                            name="role"
+                            id="{{ $role.ID }}"
+                            value="{{ $role.ID }}"
+                            required
+                          />
+                          <label class="form-check-label" for="{{ $role.ID }}">
+                            {{ $role.DisplayName }}
+                          </label>
+                        </div>
+                      </div>
+                    {{ end }}
+                  </div>
+                {{ end }}
+              </div>              
+            </div>   
+          </div> 
+        </div>
+        {{ render "role_detail_table" . }} 
+        <div>
+          <div class="form-group">
+            <label>Teams:</label>
+            <p>Select all the teams this user should be part of.</p>
+            {{ range $team := .teams }}
+              <div class="form-check mb-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="{{ $team.ID }}"
+                  id="team-{{ $team.ID }}"
+                  name="teams"
+                  {{ if $team.Default }}checked{{ end }}
+                />
+                <label class="form-check-label" for="team-{{ $team.ID }}">
+                  {{ $team.Name }}
+                </label>
+              </div>
+            {{ end }}
+          </div>
         </div>
         <div class="form-group text-right row mt-4">
           <div class="col-lg-12">

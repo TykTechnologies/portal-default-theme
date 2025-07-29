@@ -37,49 +37,57 @@
           </div>
         </form>
         <div class="mb-5">
-          {{ $userInvites := FilterUserInvites req}}
+          {{ $userInvites := FilterUserInvites req }}
           {{ if $userInvites }}
             <div class="table-wrapper">
               <table class="table">
                 <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Member Since</th>
-                  <th>Status</th>
-                  <th class="actions-cell">Action</th>
-                </tr>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Member Since</th>
+                    <th>Status</th>
+                    <th class="actions-cell">Action</th>
+                  </tr>
                 </thead>
                 <tbody>
-                {{ $roles := .roles }}
-                {{ range $i, $userInvite := $userInvites }}
-                  <tr>
-                    <td>
-                      <a class="breadcrumb-link private-portal-user-details" href="users/{{ $userInvite.ID }}">{{ $userInvite.First }} {{ $userInvite.Last }}</a>
-                    </td>
-                    <td class="private-portal-user-details"> {{ $userInvite.Email }} </td>
-                    <td> {{ index $roles $userInvite.Role }} </td>
-                    <td> {{ $userInvite.CreatedAt | date "2 Jan, 2006 15:04" }}</td>
-                    {{ if $userInvite.Uactive }}
-                        <td> <i class="bi bi-check-circle-fill check-active"></i> Registered </td>
-                    {{ else if $userInvite.Joined }}
-                      <td><i class="bi bi-clock-fill check-active"></i> Registered </td>
-                    {{ else }}
-                      <td> <i class="bi bi-check-circle-fill pending-clock"></i> Pending </td>
-                    {{ end }}
-                    <td>
-                      <div class="dropdown text-center">
-                        <button class="btn p-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <img src="/assets/images/icons/dots.svg">
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="users/{{ $userInvite.ID }}/edit">Edit</a>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                {{ end }}
+                  {{ $roles := .roles }}
+                  {{ range $i, $userInvite := $userInvites }}
+                    <tr>
+                      <td>
+                        {{ if eq $user.Role "consumer-team-member" }}
+                          {{ $userInvite.First }} {{ $userInvite.Last }}
+                        {{ else }}
+                          <a class="breadcrumb-link private-portal-user-details" href="users/{{ $userInvite.ID }}">{{ $userInvite.First }} {{ $userInvite.Last }}</a>
+                        {{ end }}
+                      </td>
+                      <td class="private-portal-user-details"> {{ $userInvite.Email }} </td>
+                      <td> {{ index $roles $userInvite.Role }} </td>
+                      <td> {{ $userInvite.CreatedAt | date "2 Jan, 2006 15:04" }}</td>
+                      {{ if $userInvite.Uactive }}
+                        <td><i class="bi bi-check-circle-fill check-active"></i> Registered</td>
+                      {{ else if $userInvite.Joined }}
+                        <td><i class="bi bi-clock-fill check-active"></i> Registered</td>
+                      {{ else }}
+                        <td><i class="bi bi-check-circle-fill pending-clock"></i> Pending</td>
+                      {{ end }}
+                      <td>
+                        {{ if eq $user.Role "consumer-team-member" }}
+                          -
+                        {{ else }}
+                          <div class="dropdown text-center">
+                            <button class="btn p-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <img src="/assets/images/icons/dots.svg">
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <a class="dropdown-item" href="users/{{ $userInvite.ID }}/edit">Edit</a>
+                            </div>
+                          </div>
+                        {{ end }}
+                      </td>
+                    </tr>
+                  {{ end }}
                 </tbody>
               </table>
             </div>
