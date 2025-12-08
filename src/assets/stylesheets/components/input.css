@@ -54,5 +54,5 @@ input.input-as-span + .password-icon {
 
 .form-control:disabled,
 .form-control[readonly] {
-  background-color: var(--tdp-light-gray);
+  background-color: var(--tdp-tab-active);
 }

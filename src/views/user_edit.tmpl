@@ -1,9 +1,8 @@
-
 <div class="private-portal-wrapper">
   <div class="container">
-    <p class="mb-3">
+    <p class="mb-3 mt-3">
       <a href="/portal/private/users" class="breadcrumb-link">
-        Back to user list
+        < Back to user list
       </a>
     </p>
 
@@ -30,51 +29,41 @@
           <div class="alert__content">{{ .error }}</div>
         </div>
       {{ end }}
-      <div class="user-invite-title-wrapper">
-        <div class="col-md-10">
-          <h2 class="users-main-title">Developer details</h2>
-        </div>
+      <div class="apps-wrapper__card-section mt-5">
+        <h1 class="heading-large mb-4">Developer details</h1>
 
-        <div class="card">
-          <div class="form-group text-right row mt-4">
-            <div class="col-lg-12">
-              <a id="user_invite_cancel" class="btn btn-secondary-outline" href="/portal/private/users">Cancel</a>
-              <input type="submit" name="submit" class="btn btn-primary" value="save changes" />
+        <div class="card p-0 mb-4">
+          <div class="card-footer m-0 p-4">
+            <div class="row mb-4">
+              <div class="col-6">
+                <label class="heading-small text-default">Name:</label>
+                <input type="text" class="form-control" name="first"  value="{{.user.First}}" placeholder="Name" required autofocus />
+              </div>
+              <div class="col-6">
+                <label class="heading-small text-default">Last name:</label>
+                <input type="text" class="form-control" name="last" value="{{.user.Last}}" placeholder="Last name" required autofocus/>
+              </div>
             </div>
-          </div>
-
-          <div class="row mb-4">
-            <div class="col-6">
-              <label class="form-label">Name:</label>
-              <input type="text" class="form-control" name="first"  value="{{.user.First}}" placeholder="Name" required autofocus />
+            <div class="row mb-4">
+              <div class="col-6">
+                <label class="heading-small text-default">Email:</label>
+                <input class="form-control" name="email" value="{{.user.Email}}" placeholder="Email" required disabled/>
+              </div>
+              <div class="col-6">
+                {{ if .roles }}
+                  <label class="heading-small text-default">Role:</label>
+                  <select class="form-control" id="selectRolesId" name="role" required>
+                    {{ range $role := .roles }}
+                        <option value="{{ $role.ID }}">{{ $role.DisplayName }}</option>
+                    {{ end }}
+                  </select>
+                {{ end }}
+              </div>
             </div>
-            <div class="col-6">
-              <label class="form-label">Last name:</label>
-              <input type="text" class="form-control" name="last" value="{{.user.Last}}" placeholder="Last name" required autofocus/>
-            </div>
-          </div>
-          <div class="row mb-4">
-            <div class="col-6">
-              <label class="form-label">Email:</label>
-              <input class="form-control" name="email" value="{{.user.Email}}" placeholder="Email" required disabled/>
-            </div>
-            <div class="col-6 selection">
-              {{ if .roles }}
-                <label class="form-label">Role:</label>
-                <select class="form-control" id="selectRolesId" name="role" required>
-                  {{ range $role := .roles }}
-                      <option value="{{ $role.ID }}">{{ $role.DisplayName }}</option>
-                  {{ end }}
-                </select>
-              {{ end }}
-            </div>
-          </div>
-          {{ render "role_detail" . }}     
-        <div>
-          <div>
-            <div class="form-group p-3">
-              <label>Teams:</label>
-              <p>Select all the teams this user should be part of.</p>
+            {{ render "role_detail" . }}
+            <div class="mb-4 col-6">
+              <label class="heading-small text-default">Teams:</label>
+              <p class="text-regular-14">Select all the teams this user should be part of.</p>
               {{ range $team := .teams }}
                 {{ $checked := false }}
                 {{ range $ut := $.user.Teams }}
@@ -91,14 +80,17 @@
                     name="teams"
                     {{ if $checked }}checked{{ end }}
                   />
-                  <label class="form-check-label" for="team-{{ $team.ID }}">
+                  <label class="form-check-label text-regular-14" for="team-{{ $team.ID }}">
                     {{ $team.Name }}
                   </label>
                 </div>
               {{ end }}
             </div>
-          </div>           
-        </div>          
+          </div>
+        </div>
+        <div class="form-group text-right mt-4">
+          <a id="user_invite_cancel" class="btn btn-secondary-outline" href="/portal/private/users">Cancel</a>
+          <input type="submit" name="submit" class="btn btn-primary" value="Save changes" />
         </div>
       </div>
     </form>
