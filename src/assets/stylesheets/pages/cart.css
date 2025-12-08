@@ -8,8 +8,8 @@
 .cart-error,
 .provisioned-credentials-wrapper,
 .empty-cart-wrapper,
-.profile-wrapper__card-section,
-.apps-wrapper__card-section {
+.apps-wrapper__card-section, 
+.messages-wrapper {
 	width: 80%;
 	margin: 0 auto;
 	margin-bottom: 30px;
@@ -20,7 +20,7 @@
 	padding-left: 50px;
 }
 .card-number {
-	font-size: 20px;
+	font-size: 18px;
 	background: var(--tdp-light-gray);
 	color: var(--tdp-text-color);
 	margin-left: -49px;
@@ -32,7 +32,7 @@
 }
 
 .cart-wrapper__card-section .product-name {
-	color: var(--tdp-light-purple);
+	color: var(--tdp-primary);
 	font-size: var(--tdp-size-md);
 }
 

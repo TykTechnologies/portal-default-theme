@@ -7,8 +7,8 @@
       <div>
       <div class="row">
         <div class="col-md-9 page-title-wrapper">
-          <h2 class="title-bold">My Apps</h2>
-          <p>Here you can view and edit your apps. If you need help getting started, take a look at our documentation.</p>
+          <h1 class="heading-large">My Apps</h1>
+          <p class="text-default-subdue">Here you can view and edit your apps. If you need help getting started, take a look at our documentation.</p>
         </div>
         <div class="col-2 align-self-center">
           <a class="btn btn-primary" href="apps">
@@ -28,7 +28,7 @@
               </div>
             </div>
             <div class="pr-2 align-self-center ml-auto">
-              <button type="submit" class="btn btn-secondary-outline w-100">Search</button>
+              <button type="submit" class="btn btn-primary-outline w-100">Search</button>
             </div>
           </div>
         </form>
@@ -37,7 +37,7 @@
           <div class="table-wrapper">
             <table class="table">
               <thead>
-                <tr>
+                <tr class="heading-small">
                   <th>Name</th>
                   <th>Description</th>
                   <th>Visibility</th>
@@ -45,7 +45,7 @@
                   <th class="actions-cell">Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="text-regular-14">
               {{ range $i, $c := $clients }}
               {{ $order := .GetFirstAccessRequest }}
                     <tr>

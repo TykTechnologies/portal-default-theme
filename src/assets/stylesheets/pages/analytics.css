@@ -120,7 +120,7 @@
     color: var(--tdp-secondary);
 	border-radius: var(--tdp-border-radius);
 	font-size: 16px;
-    font-family: "OpenSans-Semibold";
+    font-family: Inter-Semibold, sans-serif;
 	line-height: 21.79px;
 	border: var(--tdp-analytics-select-border);
 	height: 40px;
@@ -225,7 +225,7 @@
     color: var(--tdb-text-color-dark);
 	border-radius: var(--tdp-border-radius);
 	font-size: 14px;
-    font-family: "OpenSans-Semibold";
+    font-family:Inter-Semibold, sans-serif;
 	line-height: 19px;
 	border: 2px solid var(--tdp-primary-dark);
 	height: 40px;
@@ -254,7 +254,7 @@
     border-radius: 100px;
     font-size: 12px;
     line-height: 16px;
-    font-family: "OpenSans-Semibold";
+    font-family: Inter-Semibold, sans-serif;
     max-height: 26px;
 }
 .mt-6 {

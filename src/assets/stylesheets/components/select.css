@@ -1,5 +1,6 @@
 .form-select,
-select {
+select,
+.form-control.dropdown-toggle {
 	color: var(--tdp-text-color);
 	border-radius: var(--tdp-border-radius);
 	font-size: 14px;
@@ -22,4 +23,60 @@ select {
 	border-radius: var(--tdp-border-radius);
 	border: var(--tdp-primary-border);
 	outline: none;
+}
+
+/* Credential Dropdown - Bootstrap dropdown styled as select */
+.credential-dropdown .dropdown-toggle {
+	text-align: left;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;	
+	height: 35px;
+	padding-inline: 15px;
+	font-size: 14px;
+	line-height: 19px;
+	border: var(--tdp-form-element-border);
+	border-radius: var(--tdp-border-radius);
+	padding: 10px 15px;
+	background: white url(../../images/icons/arrow.svg) no-repeat calc(100% - 10px) 50%;
+	background-size: 10px 10px;
+}
+
+.credential-dropdown .dropdown-toggle:focus {
+	box-shadow: none;
+	border: var(--tdp-primary-border);
+}
+
+.credential-dropdown .dropdown-toggle .placeholder-text {
+	color: var(--tdp-secondary);
+}
+
+.credential-dropdown .dropdown-menu {
+	width: 100%;
+	padding: 0;
+	max-height: 280px;
+	overflow-y: auto;
+}
+
+.credential-dropdown .dropdown-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--tdp-neutral-lighter);
+}
+
+.credential-dropdown .dropdown-item:last-child {
+	border-bottom: none;
+}
+
+.credential-dropdown .credential-label {
+	font-weight: 500;
+	color: var(--tdp-text-color-extra-dark);
+}
+
+.credential-dropdown .selected-content {
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }

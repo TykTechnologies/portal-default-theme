@@ -1,11 +1,16 @@
 <!-- Template used to view & edit org user details -->
 
 {{$time := FormatTime .user.CreatedAt "2 Jan, 2006 at 3:04:00 PM (MST)"}}
-<div class="private-portal-wrapper mt-98">
-    <div class="container d-flex flex-column align-items-end">
+<div class="private-portal-wrapper">
+    <div class="container">
+        <p class="mb-3 mt-3">
+            <a href="/portal/private/users" class="breadcrumb-link">
+                < Back to user list
+            </a>
+        </p>
         {{ if .errors }}
             {{ range $key, $errs := .errors }}
-                <div class="alert alert-warning cart-error error-wrapper" role="alert">
+                <div class="alert alert-warning cart-error" role="alert">
                 <i class="tyk-icon tykon tykon-warning "></i>
                 <div class="alert__content">
                     <strong>{{$key}}</strong>
@@ -18,69 +23,68 @@
                 </div>
             {{ end }}
         {{ end }}
-        <div class="user-wrapper__card-section">
-            <div class="d-flex flex-row justify-content-start pb-2 align-items-center">
-                <h2 class="title-bold">User details</h2>
-            </div>
-            <div class="d-flex flex-row justify-content-end align-items-center">
-                <div class="d-flex flex-row align-items-center justify-content-between text-open-sans-bold">
-                    <i class="bi bi-pencil edit-details-icon"></i>
-                    <a class="btn-edit-user-detail text-uppercase" href="{{ .user.ID }}/edit">Edit details</a>
+        <div class="apps-wrapper__card-section mt-5">
+            <div class="d-flex flex-row justify-content-between align-items-center flex-wrap mb-4">
+                <h1 class="heading-large m-0">User details</h1>
+                <div class="cta-btns-wrapper">
+                    <a class="btn btn-primary-outline" href="{{ .user.ID }}/edit">
+                        Edit details
+                    </a>
                 </div>
             </div>
-            <div class="card p-3 mb-4">
-                <div class="card-footer__static-data d-block">
-                    <div class="row mb-4">
-                        <div class="col-lg-3">
-                            <strong class="mr-4 text-open-sans-bold text-uppercase">Name:</strong>
+            <div class="card p-0 mb-4">
+                <div class="card-footer m-0 p-4">
+                    <div class="d-flex flex-row justify-content-between align-items-center flex-wrap p-3 requests-row-section__info">
+                        <div class="d-flex flex-column pr-3">
+                            <h6 class="heading-small text-default mb-1">Name:</h6>
                         </div>
-                        <div class="col-lg-8 text-open-sans-regular private-portal-user-details">
+                        <div class="text-regular-14">
                             {{ .user.DisplayName }}
                         </div>
                     </div>
-                    <div class="row mb-4">
-                        <div class="col-lg-3">
-                            <strong class="mr-4 text-open-sans-bold text-uppercase">Email:</strong>
+                    <div class="d-flex flex-row justify-content-between align-items-center flex-wrap p-3 requests-row-section__info">
+                        <div class="d-flex flex-column pr-3">
+                            <h6 class="heading-small text-default mb-1">Email:</h6>
                         </div>
-                        <div class="col-lg-8 text-open-sans-regular private-portal-user-details">
+                        <div class="text-regular-14">
                             {{ .user.Email }}
                         </div>
                     </div>
-                    <div class="row mb-4">
-                        <div class="col-lg-3">
-                            <strong class="text-open-sans-bold text-uppercase">Member since:</strong>
+                    <div class="d-flex flex-row justify-content-between align-items-center flex-wrap p-3 requests-row-section__info">
+                        <div class="d-flex flex-column pr-3">
+                            <h6 class="heading-small text-default mb-1">Member since:</h6>
                         </div>
-                        <div class="col-lg-8 text-open-sans-regular">
+                        <div class="text-regular-14">
                             {{ $time }}
                         </div>
                     </div>
-                    <div class="row mb-4">
-                        <div class="col-lg-3">
-                            <strong class="mr-4 text-open-sans-bold text-uppercase">Role:</strong>
+                    <div class="d-flex flex-row justify-content-between align-items-center flex-wrap p-3 requests-row-section__info">
+                        <div class="d-flex flex-column pr-3">
+                            <h6 class="heading-small text-default mb-1">Role:</h6>
                         </div>
-                        <div class="col-lg-8 d-flex flex-row align-items-center justify-content-start text-open-sans-regular">
+                        <div class="text-regular-14 d-flex flex-row align-items-center">
                             {{ .user.DisplayRole }}
                             <i class="bi bi-question-circle-fill question-icon ml-1"></i>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-3">
-                            <strong class="mr-4 text-open-sans-bold text-uppercase">Status:</strong>
+                    <div class="d-flex flex-row justify-content-between align-items-center flex-wrap p-3 requests-row-section__info">
+                        <div class="d-flex flex-column pr-3">
+                            <h6 class="heading-small text-default mb-1">Status:</h6>
                         </div>
                         {{if .user.Active}}
-                            <div class="col-lg-8 d-flex flex-row align-items-center justify-content-start text-open-sans-semibold">
+                            <div class="text-regular-14 d-flex flex-row align-items-center">
                                 <i class="bi bi-check-circle-fill status-registered"></i>
                                 Registered
                             </div>
                         {{else}}
                             {{if .invite}}
                                 {{if not .invite.Active}}
-                                    <div class="col-lg-8 d-flex flex-row align-items-center justify-content-start text-open-sans-semibold">
+                                    <div class="text-regular-14 d-flex flex-row align-items-center">
                                         <i class="bi bi-check-circle-fill status-registered"></i>
                                         Registered
                                     </div>
                                 {{else}}
-                                    <div class="col-lg-8 d-flex flex-row align-items-center justify-content-start text-open-sans-semibold text-italic">
+                                    <div class="text-regular-14 d-flex flex-row align-items-center">
                                         <i class="bi bi-clock-fill status-pending"></i>
                                         Pending invite
                                     </div>
@@ -90,20 +94,15 @@
                     </div>
                 </div>
             </div>
+            <h2 class="heading-large mb-3">Advanced Settings</h2>
             {{if .user.Active}}
-                <div class="card p-3 mb-4">
-                    <div class="card-body d-flex flex-row justify-content-between align-items-center">
-                        <div class="d-flex flex-column mr-5 mt-11 mb-2">
-                            <div class="d-flex flex-row mb-4">
-                                <strong class="text-open-sans-bold text-uppercase mr-4">
-                                    Delete this user
-                                </strong>
-                            </div>
-                            <div class="d-flex flex-row delete-action-wrapper">
-                                This developer will no longer be a part of this organisation and will lose access to the credentials for any given app.
-                            </div>
+                <div class="card p-0 mb-4">
+                    <div class="card-footer m-0 p-4 d-flex flex-row w-100 justify-content-between">
+                        <div>
+                            <h4 class="heading-medium text-default">Delete this user</h4>
+                            <h5 class="body-xlarge-default">This developer will no longer be a part of this organisation and will lose access to the credentials for any given app.</h5>
                         </div>
-                        <div class="cta-btns-wrapper align-self-center mr-3">
+                        <div>
                             <button type="button" class="btn btn-danger-outline" data-toggle="modal" data-target="#deleteDeveloperModal">
                                 Delete this user
                             </button>
@@ -113,19 +112,13 @@
             {{else}}
                 {{if .invite}}
                     {{if not .invite.Active}}
-                        <div class="card p-3 mb-4">
-                            <div class="card-body d-flex flex-row justify-content-between align-items-center">
-                                <div class="d-flex flex-column mr-5 mt-11 mb-2">
-                                    <div class="d-flex flex-row mb-4">
-                                        <strong class="text-open-sans-bold text-uppercase mr-4">
-                                            Delete this user
-                                        </strong>
-                                    </div>
-                                    <div class="d-flex flex-row delete-action-wrapper">
-                                        This developer will no longer be a part of this organisation and will lose access to the credentials for any given app.
-                                    </div>
+                        <div class="card p-0 mb-4">
+                            <div class="card-footer m-0 p-4 d-flex flex-row w-100 justify-content-between">
+                                <div>
+                                    <h4 class="heading-medium text-default">Delete this user</h4>
+                                    <h5 class="body-xlarge-default">This developer will no longer be a part of this organisation and will lose access to the credentials for any given app.</h5>
                                 </div>
-                                <div class="cta-btns-wrapper align-self-center mr-3">
+                                <div>
                                     <button type="button" class="btn btn-danger-outline" data-toggle="modal" data-target="#deleteDeveloperModal">
                                         Delete this user
                                     </button>
@@ -139,26 +132,13 @@
     </div>
 </div>
 
-<form method="post">
-    <div class="modal fade" id="deleteDeveloperModal" tabindex="-1" role="dialog" aria-labelledby="deleteProfileModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered flex-column justify-content-center align-items-center" role="document">
-        <div class="modal-top-border">
-            <i class="tyk-icon tykon tykon-delete"></i>
-        </div>
-        <div class="modal-content">
-            <div class="top-border">
-            </div>
-            <div class="modal-body">
-                <h3 class="modal-h3">Delete this team-member from this org?</h3>
-                <p class="text-open-sans-regular">By removing this developer from the organisation they will no longer have access to the apps and credentials associated with this org.</p>
-                <p class="text-open-sans-regular">Do you wish to continue?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary-outline" data-dismiss="modal">Cancel</button>
-                <input type="hidden" name="mode" value="delete" />
-                <input type="submit" class="btn btn-danger" value="Delete developer"/>
-            </div>
-        </div>
-    </div>
-    </div>
-</form>
+{{ render "confirmation_modal" (dict
+  "id" "deleteDeveloperModal"
+  "title" "Delete this team-member from this org?"
+  "body" (raw "<p class='text-regular-14'>By removing this developer from the organisation they will no longer have access to the apps and credentials associated with this org.</p><p class='text-regular-14'>Do you wish to continue?</p>")
+  "confirmText" "Delete"
+  "confirmClass" "btn-danger"
+  "showIcon" true
+  "useForm" true
+  "hiddenFields" (dict "mode" "delete")
+) }}

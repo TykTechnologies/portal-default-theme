@@ -15,41 +15,6 @@
   </header>
   <div class="container">
     <div class="row">
-      {{/* Commented until it gets implemented
-         <div class="col-md-12 pt-4">
-        <form>
-          <div class="row no-gutters">
-            <div class="col-md-11">
-              <div class="row align-items-center no-gutters">
-                  <p class="mb-0">FILTER ARTICLES BY &nbsp;</p>
-                <div class="col-md-2">
-                  <select class="form-select" id="writer" name="writer">
-                    <option value="writer">writer</option>
-                  </select>
-                </div> &nbsp;OR &nbsp;
-                <div class="col-md-3">
-                  <select class="form-select" id="topic" name="topic">
-                    <option value="topic">topic</option>
-                  </select>
-                </div> &nbsp;OR &nbsp;
-                <div class="col-md-4">
-                  <div class="input-group search-container w-100">
-                    <input type="text" placeholder="Search by keyword" class="form-control search-input" id="search" name="search">
-                    <div class="input-group-append">
-                      <label class="search__label">
-                        <i class="tyk-icon tykon tykon-search"></i>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-1">
-              <button class="btn btn-secondary">Filter</button>
-            </div>
-          </div>
-        </form>
-      </div> */}}
     {{ $length := len .posts }}
     {{ if eq $length 0 }}
       <div class="col-md-12 text-center mt-4">
@@ -64,16 +29,12 @@
           {{ range $i, $val := .posts }}
               <div class="col-lg-4 card-container">
                 <div class="card blog h-100 {{ if eq $val.HeaderImage.URL "" }}dark-background{{ end }}">
-                  {{/* Commented until it gets implemented
-                  {{if $val.Video.URL }}
-                    <span class="video-tag"><img src="/assets/images/icons/video.svg"></span>
-                  {{ end }} */}}
                   {{ if $val.HeaderImage.URL }}
                     <img class="card-image-border-card-view" src='{{$val.HeaderImage.URL "preview"}}'/>
                   {{ end }}
-                  <div class="card-body text-center d-flex flex-column align-content-center justify-content-center p-4">
-                    <p> {{.CreatedAt | date "2 Jan, 2006" }} - {{/*  <!-- Commented until it gets implemented -->  {{ .Author }} */}}  </p>
-                    <h2 class="card-title d-flex flex-column justify-content-end mt-3">{{ $val.Title }}</h2>
+                  <div class="card-body d-flex flex-column justify-content-start p-4 mt-5 mr-5">
+                    <p class="body-large-default mb-0"> {{.CreatedAt | date "2 Jan, 2006" }}</p>
+                    <h2 class="card-title heading-xlarge d-flex flex-column justify-content-end mt-2">{{ $val.Title }}</h2>
                     <p class="text-uppercase">
                       {{ $val.Lede }}</p>
                   </div>
@@ -85,30 +46,13 @@
                     </span>
                   </p>
                   <div class="card-cta align-self-center">
-                    <a href="{{$val.URL}}" class="btn {{ if eq $val.HeaderImage.URL "" }}on-dark{{ end }} btn-secondary-outline">keep reading</a>
+                    <a href="{{$val.URL}}" class="btn btn-secondary">Keep reading</a>
                   </div>
                 </div>
               </div>
           {{ end }}
         </div>
       </div>
-      <!-- Pagination -->
-{{/*  Commented until it gets fixed     
-      <div class="col-md-12 text-center mt-4">
-        {{ if ge .currentPage 1 }}
-          <ul class="pagination justify-content-center mb-4">
-            <li class="page-item">
-              <a class="page-link" href="/blog?page={{sub .currentPage 1}}">{{ sub .currentPage 1 }}</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="/blog?page={{.currentPage}}">{{.currentPage}} </a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="/blog?page={{add .currentPage 1}}">{{add .currentPage 1}}</a>
-            </li>
-          </ul>
-        {{ end }}
-      </div> */}}
     {{ end }}
     </div>
   </div>

@@ -46,7 +46,12 @@
       <!-- Render main page content -->
       <div class="page-wrapper container d-flex flex-row justify-content-between">
         <!-- Render side navigation menu -->
-        {{ render "side_menu" . }}
+        {{ $path := req.URL.Path }}
+        {{ $hideSideMenu := (hasPrefix $path "/portal/private/apps")
+        }}
+        {{ if not $hideSideMenu }}
+          {{ render "side_menu" . }}
+        {{ end }}
         {{ yield }}
       </div>
       <!-- Render footer menu -->

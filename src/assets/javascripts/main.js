@@ -170,6 +170,177 @@ dcrTriggers.forEach((t) => {
     );
   });
 });
+
+/* Handle credential selection visibility in portal_checkout.tmpl
+ * HTML is server-rendered, JS only handles show/hide interactivity
+ */
+
+/* Toggle between create_new and reuse_existing credential options */
+document.addEventListener('change', (e) => {
+  if (e.target.name !== 'credential_action') return;
+
+  const container = e.target.closest('.app-credentials');
+  if (!container) return;
+
+  const selectDiv = container.querySelector('[id^="credential-select-"]');
+  const infoDiv = container.querySelector('[id^="new-credential-info-"]');
+  const dropdownBtn = container.querySelector('.credential-dropdown .dropdown-toggle');
+  const hiddenInput = container.querySelector('input[name="credential_id"]');
+
+  const isReuse = e.target.value === 'reuse_existing';
+
+  if (selectDiv) {
+    selectDiv.classList.toggle('d-none', !isReuse);
+    selectDiv.classList.toggle('d-block', isReuse);
+  }
+  if (infoDiv) {
+    infoDiv.classList.toggle('d-none', isReuse);
+    infoDiv.classList.toggle('d-block', !isReuse);
+  }
+  if (dropdownBtn) {
+    dropdownBtn.disabled = !isReuse;
+    if (!isReuse) {
+      // Reset dropdown to placeholder
+      dropdownBtn.innerHTML = '<span class="placeholder-text">Select a credential</span>';
+      if (hiddenInput) hiddenInput.value = '';
+    }
+  }
+});
+
+/* Handle credential dropdown item selection */
+document.addEventListener('click', (e) => {
+  const dropdownItem = e.target.closest('.credential-dropdown .dropdown-item');
+  if (!dropdownItem) return;
+
+  e.preventDefault();
+
+  const dropdown = dropdownItem.closest('.credential-dropdown');
+  const dropdownBtn = dropdown.querySelector('.dropdown-toggle');
+  const hiddenInput = dropdown.querySelector('input[name="credential_id"]');
+
+  const credId = dropdownItem.dataset.value;
+  const displayName = dropdownItem.dataset.displayName;
+  const plan = dropdownItem.dataset.plan;
+  const authType = dropdownItem.dataset.auth;
+
+  // Update hidden input
+  if (hiddenInput) hiddenInput.value = credId;
+
+  // Update button content to show selected credential
+  dropdownBtn.innerHTML = `
+    <span class="selected-content">
+      <span class="credential-label">${displayName} | ${plan}</span>
+      <span class="pill">${authType}</span>
+    </span>
+  `;
+
+  // Mark item as active
+  dropdown.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
+  dropdownItem.classList.add('active');
+});
+
+/* Handle app-action radio button changes (create new app vs existing app) */
+const appActionRadios = document.querySelectorAll('input[name="app-action"]');
+appActionRadios.forEach((radio) => {
+  radio.addEventListener("change", (e) => {
+    const form = e.target.closest("form");
+    if (!form) return;
+
+    const credentialSection = form.querySelector(".credential-selection-section");
+    if (!credentialSection) return;
+
+    const newAppCredentials = credentialSection.querySelector(".new-app-credentials");
+    const allAppCredentials = credentialSection.querySelectorAll(".app-credentials");
+
+    if (e.target.value === "create") {
+      // Show new app credentials section
+      if (newAppCredentials) newAppCredentials.style.display = "block";
+      allAppCredentials.forEach((div) => {
+        div.style.display = "none";
+        // Disable credential dropdown when creating new app
+        const dropdownBtn = div.querySelector('.credential-dropdown .dropdown-toggle');
+        if (dropdownBtn) {
+          dropdownBtn.disabled = true;
+        }
+      });
+    } else if (e.target.value === "existing") {
+      // Hide new app credentials section
+      if (newAppCredentials) newAppCredentials.style.display = "none";
+
+      // Show credentials for the selected app
+      const appSelect = form.querySelector("#appsControlSelect");
+      if (appSelect && appSelect.value) {
+        showCredentialsForApp(appSelect, appSelect.value);
+      }
+    }
+  });
+});
+
+/* Handle app selection changes to show correct credentials */
+const appSelects = document.querySelectorAll("#appsControlSelect");
+appSelects.forEach((appSelect) => {
+  // Listen for app selection changes
+  appSelect.addEventListener("change", (e) => {
+    const selectedAppId = e.target.value;
+    showCredentialsForApp(e.target, selectedAppId);
+  });
+
+  // Initialize: disable all credential dropdowns except for currently selected app
+  const form = appSelect.closest("form");
+  if (form) {
+    const credentialSection = form.querySelector(".credential-selection-section");
+    if (credentialSection) {
+      const allAppCredentials = credentialSection.querySelectorAll(".app-credentials");
+      allAppCredentials.forEach((div) => {
+        const dropdownBtn = div.querySelector('.credential-dropdown .dropdown-toggle');
+        if (dropdownBtn) {
+          dropdownBtn.disabled = true;
+        }
+      });
+
+      // If an app is already selected, enable its credential dropdown
+      if (appSelect.value) {
+        const selectedAppCredentials = credentialSection.querySelector(`.app-credentials[data-app-id="${appSelect.value}"]`);
+        if (selectedAppCredentials) {
+          const dropdownBtn = selectedAppCredentials.querySelector('.credential-dropdown .dropdown-toggle');
+          if (dropdownBtn) {
+            dropdownBtn.disabled = false;
+          }
+        }
+      }
+    }
+  }
+});
+
+/* Show credentials section for selected app (HTML is server-rendered) */
+function showCredentialsForApp(appSelectElement, appId) {
+  const form = appSelectElement.closest("form");
+  if (!form) return;
+
+  const credentialSection = form.querySelector(".credential-selection-section");
+  if (!credentialSection) return;
+
+  // Hide all app-credentials divs and disable their dropdowns
+  credentialSection.querySelectorAll(".app-credentials").forEach((div) => {
+    div.style.display = "none";
+    const dropdownBtn = div.querySelector('.credential-dropdown .dropdown-toggle');
+    if (dropdownBtn) dropdownBtn.disabled = true;
+  });
+
+  // Show the credentials div for the selected app
+  const selectedAppCredentials = credentialSection.querySelector(`.app-credentials[data-app-id="${appId}"]`);
+  if (!selectedAppCredentials) return;
+
+  selectedAppCredentials.style.display = "block";
+
+  // Enable dropdown only if "reuse_existing" is selected
+  const dropdownBtn = selectedAppCredentials.querySelector('.credential-dropdown .dropdown-toggle');
+  const reuseRadio = selectedAppCredentials.querySelector('input[name="credential_action"][value="reuse_existing"]');
+  if (dropdownBtn && reuseRadio && reuseRadio.checked) {
+    dropdownBtn.disabled = false;
+  }
+}
+
 //sidebar active
 let id = "/portal" + window.location.href.split("/portal")[1];
 if (id.includes("users")) {
@@ -256,3 +427,33 @@ FilterObserver(
   "apps-filter-latency-chart",
   FilterObserverHanlderForLatencyChart
 );
+
+$(document).on('show.bs.modal', '[id^="change-plan-"]', function () {
+  const modal = $(this);
+  const plansGrid = modal.find('.plans-grid');
+  const hiddenInput = modal.find('input[type="hidden"][name="new_plan_id"]');
+  const submitBtn = modal.find('button[type="submit"]');
+
+  plansGrid.find('.plan-card').on('click', function() {
+    if ($(this).hasClass('disabled') || $(this).data('is-current')) {
+      return;
+    }
+
+    const planId = $(this).data('plan-id');
+    plansGrid.find('.plan-card').removeClass('selected');
+    $(this).addClass('selected');
+    hiddenInput.val(planId);
+    submitBtn.prop('disabled', false);
+  });
+});
+
+$(document).on('hidden.bs.modal', '[id^="change-plan-"]', function () {
+  const modal = $(this);
+  const plansGrid = modal.find('.plans-grid');
+  const hiddenInput = modal.find('input[type="hidden"][name="new_plan_id"]');
+  const submitBtn = modal.find('button[type="submit"]');
+
+  plansGrid.find('.plan-card').removeClass('selected');
+  hiddenInput.val('');
+  submitBtn.prop('disabled', true);
+});

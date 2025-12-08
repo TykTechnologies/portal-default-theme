@@ -58,13 +58,13 @@
 }
 
 .alert-danger > .tyk-icon:first-child {
-  background-color: var(--tdp-danger-light);
+  background-color: var(--tdp-alert-danger-icon-color);
 }
 
 .alert-info > .tyk-icon:first-child {
-  background-color: var(--tdp-text-color);
+  background-color: var(--link-default);
 }
 
 .alert-success > .tyk-icon:first-child {
-  background-color: var(--tdp-primary-dark);
+  background-color: var(--tdp-alert-sucess-icon-color);
 }

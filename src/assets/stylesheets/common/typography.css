@@ -2,17 +2,17 @@
 
 h1,
 h2 {
-	font-family: "OpenSans-Bold";
+	font-family: Inter-Bold, sans-serif;
 }
 
 h3,
 h4,
 h5 {
-	font-family: "OpenSans-Bold";
+	font-family: Inter-Bold, sans-serif;
 }
 
 strong {
-	font-family: "OpenSans-Bold";
+	font-family: Inter-Bold, sans-serif;
 }
 
 /* Font sizes */
@@ -44,25 +44,9 @@ h6 {
 
 body,
 p {
-	font-family: "OpenSans-Regular";
+	font-family: Inter-Regular, sans-serif;
 	font-size: 16px;
 	line-height: 20px;
-}
-.text-open-sans-regular {
-	font-family: "OpenSans-Regular";
-	font-size: 16px;
-	line-height: 22px;
-}
-.text-open-sans-semibold{
-	font-family: "OpenSans-Semibold";
-	font-size: 14px;
-	line-height: 19px;
-}
-
-.text-open-sans-bold{
-	font-family: "OpenSans-Bold";
-	font-size: 14px;
-	line-height: 19px;
 }
 
 .text-italic {
@@ -94,7 +78,7 @@ p {
 }
 
 .text-regular-14 {
-    font-family: "OpenSans-Regular";
+    font-family: Inter-Regular, sans-serif;
     font-size: 14px;
     line-height: 19px;
 }
@@ -108,39 +92,19 @@ p {
 	color: var(--tdp-secondary);
 }
 .text-regular-12 {
-	font-family: "OpenSans-Regular";
+	font-family: Inter-Regular, sans-serif;
 	font-size: 12px;
 	line-height: 16px;
 }
 .gray-lighter{
 	color: var(--tdb-text-color-gray-lighter);
 }
-.text-os-semibold-16{
-	font-family: "OpenSans-Semibold";
-	font-size: 16px;
-	line-height: 22px;
-}
 .default-base{
 	color: var(--tdp-extra-dark);
-}
-.text-os-bold-17{
-	font-family: "OpenSans-Bold";
-	font-size: 17px;
-	line-height: 23px;
 }
 .underline{
 	text-decoration: underline;
 	cursor: pointer;
-}
-.text-os-semibold-12{
-	font-family: "OpenSans-Semibold";
-	font-size: 12px;
-	line-height: 16px;
-}
-.text-open-sans-bold-20{
-	font-family: "OpenSans-Bold";
-	font-size: 20px;
-	line-height: 27.24px;
 }
 .courier-new-regular {
 	font-family: 'Courier New', Courier, monospace;
@@ -148,3 +112,55 @@ p {
 	line-height: 16px;
 	color: var(--tdp-text-color);
 }
+.text-default-subdue {
+	color: var(--tdb-text-default-subdue);
+}
+.text-default {
+	color: var(--tdp-text-color-extra-dark);
+}
+.heading-xlarge {
+	font-family: Inter-Bold, sans-serif;
+	font-size: 32px;
+	line-height: 36px;
+}
+.heading-large {
+	font-family: Inter-Bold, sans-serif;
+	font-size: 20px;
+	line-height: 24px;
+}
+.heading-medium {
+	font-family: Inter-Bold, sans-serif;
+	font-size: 18px;
+	line-height: 24px;
+}
+.heading-small {
+	font-family: Inter-SemiBold, sans-serif;
+	font-size: 14px;
+	line-height: 20px;
+}
+.heading-xsmall {
+	font-family: Inter-SemiBold, sans-serif;
+	font-size: 13.2px;
+	line-height: 16px;
+}
+.body-large-bold {
+	font-family: Inter-Bold, sans-serif;
+	font-size: 14px;
+	line-height: 20px;
+}
+.body-medium-default {
+	font-family: Inter-Regular, sans-serif;
+	font-size: 13.2px;
+	line-height: 20px;
+}
+.body-large-default {
+	font-family: Inter-Regular, sans-serif;
+	font-size: 14px;
+	line-height: 20px;
+}
+.body-xlarge-default {
+	font-family: Inter-Regular, sans-serif;
+	font-size: 16px;
+	line-height: 20px;
+}
+
