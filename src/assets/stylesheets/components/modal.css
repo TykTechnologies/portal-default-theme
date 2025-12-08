@@ -2,23 +2,28 @@
   max-width: 530px;
 }
 .modal-content {
-  border-radius: var(--tdp-border-radius);
+  border-radius: var(--tdp-login-form-border-radius);
 }
 
 .modal-header,
 .modal-footer {
-  border: none;
+  border-top: 1px solid var(--tdp-neutral);
 }
 
-.modal-title {
-  font-family: 'Smoolthan-Semibold';
-}
 .modal-body{
-  padding: 50px 30px 40px 30px;
+  padding: 20px 30px 0px 30px;
+  color: var(--tdb-text-default-subdue);
 }
-.modal-body p {
-  font-size: 14px;
+.modal-body p,
+.modal-body ul {
+  font-size: 13.2px;
 }
+
+.modal-body ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
 .modal-top-border {
   display: flex;
   background-color: var(--tdp-danger-light);
@@ -37,10 +42,10 @@
   width: 100%;
   background-color: var(--tdp-danger-light);
   height: 15px;
-  border-top-right-radius: calc(0.3rem + 15px);
-  border-top-left-radius: calc(0.3rem + 15px);
+  border-top-right-radius: 7px;
+  border-top-left-radius: 7px;
 }
 
 .modal-h3 {
-  font-family: "OpenSans-Semibold";
+  font-family: Inter-Semibold, sans-serif;
 }

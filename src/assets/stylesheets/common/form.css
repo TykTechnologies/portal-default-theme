@@ -32,3 +32,9 @@
   width: 80%;
   margin-left: 20%;
 }
+.dropdown-menu {
+  border-radius: var(--tdp-dropdown-menu-radius);
+}
+.dropdown-toggle::after {
+    content: none !important;
+}

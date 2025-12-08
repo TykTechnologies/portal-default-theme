@@ -1,20 +1,15 @@
 {{ if .messages  }}
-    <div>
+    <div class="messages-wrapper">
         {{ range $i, $msg := .messages }}
             {{ if eq $msg.Type "success" }}
                 <div class="alert alert-success" role="alert">
-                    <i class="tyk-icon tykon tykon-check "></i>
-                    <div class="alert__content">{{.Content}}</div>
+                    <i class="tyk-icon tykon tykon-check"></i>
+                    <div class="alert__content heading-small">{{.Content}}</div>
                 </div>
             {{ else if eq $msg.Type "error" }}
-                <div class="alert alert-warning" role="alert">
-                    <i class="tyk-icon tykon tykon-warning "></i>
-                    <div class="alert__content">
-                        <strong>{{.Title}}</strong>
-                        <ul>
-                            <li>{{.Content}}</li>
-                        </ul>
-                    </div>
+                <div class="alert alert-danger" role="alert">
+                    <i class="tyk-icon tykon tykon-warning"></i>
+                    <div class="alert__content heading-small">{{.Content}}</div>
                 </div>
             {{ end }}
         {{ end }}

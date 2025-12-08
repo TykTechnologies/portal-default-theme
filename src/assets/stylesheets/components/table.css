@@ -12,12 +12,11 @@
 	border-radius: 18px;
 	width: 100%;
 	margin-bottom: 0;
-	color: var(--tdp-text-color);
+	color: var(--tdp-text-color-extra-dark);
 }
 
 .table > thead > tr > th {
-	text-transform: uppercase;
-	font-family: "OpenSans-Bold";
+	font-family: Inter-Bold, sans-serif;
 }
 
 .table td,

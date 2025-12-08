@@ -29,7 +29,7 @@
         <div class="d-flex navbar-cta align-items-center">
           {{if CanCreateOrganisation req }}
             <div>
-                <a id="create-org-btn" class="btn org-btn-primary" href="/portal/private/organisation">Create an Organisation</a>
+                <a id="create-org-btn" class="btn btn-secondary" href="/portal/private/organisation">Create an Organisation</a>
             </div>
           {{end}}
           {{ $user := CurrentUser req }}
@@ -58,22 +58,24 @@
                 <a class="nav-link admin-dash" href="/admin">Go to Admin App ></a>
               </li>
             {{end}}
-            {{ $cart := GetCart $user.ID }}
-            {{ if ne $user.Role "provider-admin" }}
-              <li class="nav-item cart">
-                <a class="nav-link cart__link" href="/portal/private/cart/provision">
-                  {{if $cart}}
-                    <img src="/assets/images/icons/cart.svg">
-                  {{else}}
-                    <img src="/assets/images/icons/full-cart.svg">
-                  {{end}}
-                  <span class="badge cart__item-count">{{if $cart}} {{ len $cart }} {{end}}</span>
-                </a>
-              </li>
+            {{ if IsShoppingCartEnabled }}
+              {{ $cart := GetCart $user.ID }}
+              {{ if ne $user.Role "provider-admin" }}
+                <li class="nav-item cart">
+                  <a class="nav-link cart__link" href="/portal/private/cart/provision">
+                    {{if $cart}}
+                      <img src="/assets/images/icons/cart.svg">
+                    {{else}}
+                      <img src="/assets/images/icons/full-cart.svg">
+                    {{end}}
+                    <span class="badge cart__item-count">{{if $cart}} {{ $cart.TotalProducts }} {{end}}</span>
+                  </a>
+                </li>
+              {{ end }}
             {{ end }}
           {{ else }}
             <li class="nav-item">
-              <a class="btn btn-primary btn-login" href="/auth/password/login">Log in</a>
+              <a class="btn btn-primary btn-login" href="{{LoginURL}}">Log in</a>
             </li>
             <li class="nav-item">
               <a class="btn btn-secondary" href="/auth/password/register">Register</a>

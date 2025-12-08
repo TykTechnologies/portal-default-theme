@@ -1,6 +1,5 @@
 <!-- Template used for adding a new App -->
-<div class="apps-wrapper">
-  <div class="container">
+<div class="apps-wrapper container">
     {{ if .errors }}
       {{ range $key, $errs := .errors }}
         <div class="alert alert-warning cart-error" role="alert">
@@ -16,7 +15,7 @@
         </div>
       {{ end }}
     {{ end }}
-		<p class="mb-3">
+		<p class="mb-3 mt-3">
 			<a href="/portal/private/dashboard" class="breadcrumb-link">
 				< Back to Apps overview </a>
     </p>
@@ -28,23 +27,23 @@
           <div class="alert__content">{{ .error }}</div>
         </div>
       {{ end }}
-      <div class="profile-wrapper__card-section">
-        <h2 class="text-center title-bold mb-3">Create a new App</h2>
-        <p class="text-center mb-5">An app serves as a container for one or multiple sets of credentials and in the future, different apps can have different ownerships. We recommend thinking about the use case when setting up a new app.</p>
-        <h2 class="card-title title-bold mb-2">Details</h2>
-        <div class="card cart-card">
-          <div class="card-body">
-            <div class="row mb-4">
-              <label class="form-label">App name:</label>
+      <div class="apps-wrapper__card-section">
+        <h1 class="heading-xlarge">Create a new App</h1>
+        <p class="mb-5 text-default-subdue">An app serves as a container for one or multiple sets of credentials and in the future, different apps can have different ownerships. We recommend thinking about the use case when setting up a new app.</p>
+        <h2 class="heading-large mb-4">App details</h2>
+        <div class="card p-0 mb-4">
+          <div class="card-footer m-0 p-3 d-block no-border w-100">
+            <div class="mb-4">
+              <label class="heading-small text-default">App name:</label>
               <input type="text" name="name" class="form-control" placeholder="App Name" required autofocus/>
             </div>
-            <div class="row mb-4">
-              <label class="form-label">Description:</label>
+            <div class="mb-4">
+              <label class="heading-small text-default">Description:</label>
               <textarea rows="3" name="description" class="form-control" placeholder="App Description"></textarea>
             </div>
             {{ if not .isDefaultOrgUser }}
-            <div class="row mb-4">
-              <label class="form-label">Visibility:</label>
+            <div class="mb-4">
+              <label class="heading-small text-default">Visibility:</label>
               <select name="visibility" class="form-control">
                 <option value="personal">Personal</option>
                 <option value="team">Team</option>
@@ -54,20 +53,17 @@
             {{ else }}
             <input type="hidden" name="visibility" value="personal" />
             {{ end }}
-            <div class="row mb-4">
-              <label class="form-label">Redirect URLs:</label>
+            <div class="mb-4">
+              <label class="heading-small text-default">Redirect URLs:</label>
               <input name="redirectURLs" class="form-control" placeholder="Redirect URLs"/>
               <small id="redirectHelp" class="form-text with-info-icon">Separate URLs with commas</small>
             </div>
           </div>
         </div>
-        <div class="form-group text-right row mt-4">
-          <div class="col-lg-12">
-            <a id="app_form_cancel" class="btn btn-secondary-outline" href="/portal/private/dashboard">Cancel</a>
-            <input type="submit" name="submit" class="btn btn-primary" value="create app" />
-          </div>
+        <div class="form-group text-right mt-4">
+          <a id="app_form_cancel" class="btn btn-secondary-outline" href="/portal/private/dashboard">Cancel</a>
+          <input type="submit" name="submit" class="btn btn-primary" value="Create App" />
         </div>
       </div>
     </form>
-  </div>
 </div>
