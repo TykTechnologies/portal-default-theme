@@ -39,7 +39,7 @@
       </div>
       {{if .done}}
         <p class="text-center mt-4">
-          <a class="btn portal-primary" href="/auth/password/login">GO TO LOG IN</a>
+          <a class="btn portal-primary" href="{{LoginURL}}">GO TO LOG IN</a>
         </p>
       {{end}}
     {{ else }}
@@ -143,7 +143,7 @@
         </div>
         <div class="form-group text-center">
           <span class="text-regular-14 login-form-label login-form-info">Already a member?</span>
-          <a href="/auth/password/login" class="brand-link login-form-label">Log in</a>
+          <a href="{{LoginURL}}" class="brand-link login-form-label">Log in</a>
         </div>
       </form>
     {{ end }}

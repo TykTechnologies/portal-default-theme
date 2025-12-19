@@ -1,8 +1,8 @@
 <div class="private-portal-wrapper">
-    <div class="container">
-        <p class="mb-3">
+    <div class="apps-wrapper container">
+        <p class="mb-3 mt-3">
             <a href="/portal/private/users" class="breadcrumb-link">
-                Back to user list
+                < Back to user list
             </a>
         </p>
 
@@ -29,26 +29,22 @@
                     <div class="alert__content">{{ .error }}</div>
                 </div>
             {{ end }}
-            <div class="org-card">
-                <div class="user-invite-title-wrapper">
-                    <div class="col-md-10">
-                        <h2 class="users-main-title">Create an Organisation</h2>
-                        <p>With an organisation admin account you will be able to invite external users to collaborate with.</p>
+            <div class="apps-wrapper__card-section mt-5">
+                <h1 class="heading-large">Create an Organisation</h1>
+                <p class="text-regular-14 text-default-subdue mt-2">With an organisation admin account you will be able to invite external users to collaborate with.</p>
+
+                <div class="card p-0 mb-4 mt-4">
+                    <div class="card-footer m-0 p-4">
+                        <div class="mb-4">
+                            <label class="heading-small text-default">Organisation Name:</label>
+                            <input type="text" class="form-control" name="name"  value="{{.name}}" placeholder="Name" required autofocus />
+                        </div>
                     </div>
                 </div>
 
-                <div class="org-card-body row mb-4">
-                    <div class="col-12">
-                        <label class="form-label">Organisation Name:</label>
-                        <input type="text" class="form-control" name="name"  value="{{.name}}" placeholder="Name" required autofocus />
-                    </div>
-                </div>
-
-                <div class="org-card-footer form-group text-right row mt-4">
-                    <div class="col-lg-12">
-                        <a id="org_cancel" class="btn btn-secondary-outline" href="/portal/private/users">Cancel</a>
-                        <input type="submit" name="submit" class="btn btn-primary" value="Create Organisation" />
-                    </div>
+                <div class="form-group text-right mt-4">
+                    <a id="org_cancel" class="btn btn-secondary-outline" href="/portal/private/users">Cancel</a>
+                    <input type="submit" name="submit" class="btn btn-primary" value="Create Organisation" />
                 </div>
             </div>
 

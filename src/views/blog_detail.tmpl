@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <p> {{ .post.CreatedAt | date "2 Jan, 2006" }} - <!-- /* Commented until it gets implemented */ {{ .Author }} --> </p>
+        <p> {{ .post.CreatedAt | date "2 Jan, 2006" }}</p>
         <h1>{{.post.Title}}</h1>
         <p class="lead">
           {{.post.Lede}}
@@ -34,14 +34,11 @@
             {{if lt $i 3}}
               <div class="col-lg-4 card-container">
                 <div class="card blog h-100 {{ if eq $val.HeaderImage.URL "" }}dark-background{{ end }}">
-                  {{/* Commented until it gets implemented {{if $val.Video.URL }}
-                    <span class="video-tag"><img src="/assets/images/icons/video.svg"></span>
-                  {{ end }} */}}
                   {{ if $val.HeaderImage.URL }}
                     <img class="card-image-border-card-view" src='{{$val.HeaderImage.URL "preview"}}'/>
                   {{ end }}
-                  <div class="card-body text-center d-flex flex-column align-content-center justify-content-center p-4">
-                    <h2 class="card-title d-flex flex-column justify-content-end mt-3">{{ $val.Title }}</h2>
+                  <div class="card-body d-flex flex-column justify-content-start p-4 mt-5 mr-5">
+                    <h2 class="card-title heading-xlarge d-flex flex-column justify-content-end mt-2">{{ $val.Title }}</h2>
                     <p class="text-uppercase">
                       {{ $val.Lede }}</p>
                   </div>
@@ -53,7 +50,7 @@
                     </span>
                   </p>
                   <div class="card-cta align-self-center">
-                    <a href="{{$val.URL}}" class="btn {{ if eq $val.HeaderImage.URL "" }}on-dark{{ end }} btn-secondary-outline">keep reading</a>
+                    <a href="{{$val.URL}}" class="btn btn-secondary">Keep reading</a>
                   </div>
                 </div>
               </div>
