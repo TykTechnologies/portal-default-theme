@@ -1,0 +1,146 @@
+name: Portal Default Theme Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag name (e.g., 1.16.0)'
+        required: true
+
+jobs:
+  determine-version:
+    name: Determine release version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract.outputs.version }}
+      is_manual: ${{ steps.extract.outputs.is_manual }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version
+        id: extract
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.event.inputs.tag_name }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Manual workflow execution
+            VERSION="$TAG_NAME"
+            echo "is_manual=true" >> $GITHUB_OUTPUT
+            echo "📝 Manual workflow with tag: $VERSION"
+          else
+            # Automatic workflow on push to main
+            MERGE_COMMIT_MSG=$(git log -1 --pretty=%s)
+            echo "Merge commit message: $MERGE_COMMIT_MSG"
+
+            # Extract branch name from merge commit message
+            # Format: "Merge pull request #X from TykTechnologies/release-Y.Y.Y"
+            if [[ "$MERGE_COMMIT_MSG" =~ release-([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+              VERSION="${BASH_REMATCH[1]}"
+              echo "is_manual=false" >> $GITHUB_OUTPUT
+              echo "✅ Extracted version from merge: $VERSION"
+            else
+              echo "⚠️ Not a release branch merge, skipping release creation"
+              echo "version=" >> $GITHUB_OUTPUT
+              echo "is_manual=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+
+          # Validate version format (X.Y.Z or X.Y.Z-suffix)
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
+            echo "❌ Invalid version format: $VERSION"
+            echo "Expected format: X.Y.Z or X.Y.Z-suffix (e.g., 1.16.0, 1.16.0-rc1)"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "✅ Version validated: $VERSION"
+
+  create-release:
+    name: Create release tag
+    runs-on: ubuntu-latest
+    needs: determine-version
+    if: needs.determine-version.outputs.version != ''
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if tag exists
+        id: check_tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.determine-version.outputs.version }}
+        run: |
+          if gh api "/repos/${{ github.repository }}/git/refs/tags/$VERSION" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Tag $VERSION already exists"
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+            echo "✅ Tag $VERSION does not exist, will create"
+          fi
+
+      - name: Create tag
+        if: steps.check_tag.outputs.tag_exists == 'false' && needs.determine-version.outputs.is_manual == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.determine-version.outputs.version }}
+        run: |
+          # Get current commit SHA
+          COMMIT_SHA=$(gh api "/repos/${{ github.repository }}/git/refs/heads/main" --jq .object.sha)
+
+          # Create annotated tag
+          TAG_SHA=$(gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${{ github.repository }}/git/tags" \
+            -f tag="$VERSION" \
+            -f message="Release $VERSION" \
+            -f object="$COMMIT_SHA" \
+            -f type="commit" \
+            --jq .sha)
+
+          # Create reference to the tag
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${{ github.repository }}/git/refs" \
+            -f ref="refs/tags/$VERSION" \
+            -f sha="$TAG_SHA"
+
+          echo "✅ Created tag $VERSION"
+
+      - name: Create GitHub Release
+        if: steps.check_tag.outputs.tag_exists == 'false' && needs.determine-version.outputs.is_manual == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.determine-version.outputs.version }}
+          name: Release ${{ needs.determine-version.outputs.version }}
+          body: Portal ${{ needs.determine-version.outputs.version }} default theme
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          channel-id: '#team-ext-engineering-pr-notifications'
+          slack-message: |
+            *Portal Default Theme Release ${{ needs.determine-version.outputs.is_manual == 'true' && '(Test Run)' || 'Created' }}*
+
+            Tag `${{ needs.determine-version.outputs.version }}` ${{ needs.determine-version.outputs.is_manual == 'true' && 'validated (not created - test mode)' || 'was created in portal-default-theme' }}
+
+            ${{ needs.determine-version.outputs.is_manual == 'false' && format('Release: <https://github.com/{0}/releases/tag/{1} | {1}>', github.repository, needs.determine-version.outputs.version) || '' }}
+
+            Triggered by: ${{ github.actor }}
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.UI_SLACK_AUTH_TOKEN }}
