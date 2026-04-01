@@ -10,6 +10,9 @@ on:
         description: 'Release tag name (e.g., 1.16.0)'
         required: true
 
+permissions:
+  contents: write
+
 jobs:
   determine-version:
     name: Determine release version
@@ -19,7 +22,7 @@ jobs:
       is_manual: ${{ steps.extract.outputs.is_manual }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
@@ -33,7 +36,7 @@ jobs:
             # Manual workflow execution
             VERSION="$TAG_NAME"
             echo "is_manual=true" >> $GITHUB_OUTPUT
-            echo "📝 Manual workflow with tag: $VERSION"
+            echo "Manual workflow with tag: $VERSION"
           else
             # Automatic workflow on push to main
             MERGE_COMMIT_MSG=$(git log -1 --pretty=%s)
@@ -44,9 +47,9 @@ jobs:
             if [[ "$MERGE_COMMIT_MSG" =~ release-([0-9]+\.[0-9]+\.[0-9]+) ]]; then
               VERSION="${BASH_REMATCH[1]}"
               echo "is_manual=false" >> $GITHUB_OUTPUT
-              echo "✅ Extracted version from merge: $VERSION"
+              echo "Extracted version from merge: $VERSION"
             else
-              echo "⚠️ Not a release branch merge, skipping release creation"
+              echo "Not a release branch merge, skipping release creation"
               echo "version=" >> $GITHUB_OUTPUT
               echo "is_manual=false" >> $GITHUB_OUTPUT
               exit 0
@@ -55,13 +58,13 @@ jobs:
 
           # Validate version format (X.Y.Z or X.Y.Z-suffix)
           if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
-            echo "❌ Invalid version format: $VERSION"
+            echo "Invalid version format: $VERSION"
             echo "Expected format: X.Y.Z or X.Y.Z-suffix (e.g., 1.16.0, 1.16.0-rc1)"
             exit 1
           fi
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "✅ Version validated: $VERSION"
+          echo "Version validated: $VERSION"
 
   create-release:
     name: Create release tag
@@ -70,7 +73,7 @@ jobs:
     if: needs.determine-version.outputs.version != ''
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Check if tag exists
         id: check_tag
@@ -80,10 +83,10 @@ jobs:
         run: |
           if gh api "/repos/${{ github.repository }}/git/refs/tags/$VERSION" >/dev/null 2>&1; then
             echo "tag_exists=true" >> $GITHUB_OUTPUT
-            echo "⚠️ Tag $VERSION already exists"
+            echo "Tag $VERSION already exists"
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
-            echo "✅ Tag $VERSION does not exist, will create"
+            echo "Tag $VERSION does not exist, will create"
           fi
 
       - name: Create tag
@@ -116,11 +119,11 @@ jobs:
             -f ref="refs/tags/$VERSION" \
             -f sha="$TAG_SHA"
 
-          echo "✅ Created tag $VERSION"
+          echo "Created tag $VERSION"
 
       - name: Create GitHub Release
         if: steps.check_tag.outputs.tag_exists == 'false' && needs.determine-version.outputs.is_manual == 'false'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2
         with:
           tag_name: ${{ needs.determine-version.outputs.version }}
           name: Release ${{ needs.determine-version.outputs.version }}
@@ -130,7 +133,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Send Slack notification
-        uses: slackapi/slack-github-action@v1.25.0
+        uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
         with:
           channel-id: '#team-ext-engineering-pr-notifications'
           slack-message: |
