@@ -321,11 +321,11 @@
 						{{ if or $oasfile $oasurl $isGraphql }}
 							{{$url := ""}}
 							{{if $oasfile }}
-								{{$url = .OASDocument.Base.Url}}
+								{{$url = .OASDocument.URL}}
 							{{else if $oasurl}}
 								{{$url = .OASUrl}}
 							{{else if $graphqlsdl}}
-								{{$url = .GraphQLSDL.Base.Url}}
+								{{$url = .GraphQLSDL.URL}}
 							{{end}}
 							{{$template := ProductDocTemplate req $thisProduct.Path $spec_detail.SpecAlias }}
 							{{if (eq $initialAPIID "")}}
@@ -349,11 +349,11 @@
 							{{ if or $oasfile $oasurl $graphqlsdl $isGraphQL }}
 								{{$url := ""}}
 								{{if $oasfile }}
-									{{$url = .OASDocument.Base.Url}}
+									{{$url = .OASDocument.URL}}
 								{{else if $oasurl}}
 									{{$url = .OASUrl}}
 								{{else if $graphqlsdl}}
-									{{$url = .GraphQLSDL.Base.Url}}
+									{{$url = .GraphQLSDL.URL}}
 								{{end}}
 								{{$template := ProductDocTemplate req $thisProduct.Path $api_detail.APIID }}
 								{{if and (not $isGraphQL) (eq $initialAPIID "")}}
