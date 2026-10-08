@@ -1,4 +1,12 @@
 {{ $user := CurrentUser req }}
+{{ $canInvite := and $user.HasOrganisation (UserCan $user "create" "team-user") }}
+{{ $canManage := and $user.HasOrganisation (UserCan $user "update" "team-user") }}
+{{ $inviteTip := "Your role doesn't have permission to invite users" }}
+{{ $editTip := "Your role doesn't have permission to edit users" }}
+{{ if not $user.HasOrganisation }}
+  {{ $inviteTip = "Your account isn't part of an organisation" }}
+  {{ $editTip = "Your account isn't part of an organisation" }}
+{{ end }}
 <div class="private-portal-wrapper">
   <div class="container">
 
@@ -11,14 +19,21 @@
             <h1 class="heading-large">Users</h1>
             <p class="text-default-subdue">Here's a list of all the members that are part of this organisation.</p>
           </div>
-          {{ if eq $user.Role "consumer-admin" }}
           <div class="col-2 align-self-center">
+            {{ if $canInvite }}
             <a class="btn btn-primary" href="users/invite">
               <i class="tyk-icon tykon tykon-plus "></i>
               <span>Invite new user</span>
             </a>
+            {{ else }}
+            <span class="disabled-control" tabindex="0" data-toggle="tooltip" title="{{ $inviteTip }}">
+              <a class="btn btn-primary disabled" role="button" aria-disabled="true" tabindex="-1">
+                <i class="tyk-icon tykon tykon-plus "></i>
+                <span>Invite new user</span>
+              </a>
+            </span>
+            {{ end }}
           </div>
-          {{ end }}
         </div>
         <form class="mb-4 mt-4">
           <div class="search-form-wrapper d-flex flex-row">
@@ -55,10 +70,10 @@
                   {{ range $i, $userInvite := $userInvites }}
                     <tr>
                       <td>
-                        {{ if eq $user.Role "consumer-team-member" }}
-                          {{ $userInvite.First }} {{ $userInvite.Last }}
-                        {{ else }}
+                        {{ if $canManage }}
                           <a class="breadcrumb-link private-portal-user-details" href="users/{{ $userInvite.ID }}">{{ $userInvite.First }} {{ $userInvite.Last }}</a>
+                        {{ else }}
+                          {{ $userInvite.First }} {{ $userInvite.Last }}
                         {{ end }}
                       </td>
                       <td class="private-portal-user-details"> {{ $userInvite.Email }} </td>
@@ -72,16 +87,22 @@
                         <td><i class="bi bi-check-circle-fill pending-clock"></i> Pending</td>
                       {{ end }}
                       <td>
-                        {{ if eq $user.Role "consumer-team-member" }}
-                          -
-                        {{ else }}
+                        {{ if $canManage }}
                           <div class="dropdown text-center">
                             <button class="btn p-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <img src="/assets/images/icons/dots.svg">
+                              <img src="/assets/images/icons/dots.svg" alt="Actions">
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                               <a class="dropdown-item" href="users/{{ $userInvite.ID }}/edit">Edit</a>
                             </div>
+                          </div>
+                        {{ else }}
+                          <div class="text-center">
+                            <span class="disabled-control" tabindex="0" data-toggle="tooltip" title="{{ $editTip }}">
+                              <button class="btn p-0" type="button" disabled aria-disabled="true">
+                                <img src="/assets/images/icons/dots.svg" alt="Actions">
+                              </button>
+                            </span>
                           </div>
                         {{ end }}
                       </td>
@@ -93,7 +114,7 @@
           {{ else }}
             <div class="alert alert-info" role="alert">
               <i class="tyk-icon tykon tykon-warning "></i>
-              <div class="alert__content">No user to be shown.</div>
+              <div class="alert__content">No users to be shown.</div>
             </div>
           {{ end }}
         </div>

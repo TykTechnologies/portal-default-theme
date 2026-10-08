@@ -100,7 +100,7 @@
 {{ render "confirmation_modal" (dict
   "id" (printf "detachCertificateModal-%d" $accessRequest.ID)
   "title" "Detach certificate?"
-  "body" (raw "<p>Detaching the certificate will result in losing access to the APIs.</p><p>If you detach the certificate, it is advised to promptly replace with a new one to maintain access to the API Product(s).</p><p>Do you wish to continue?</p>")
+  "body" (raw "<p>Detaching the certificate will result in losing access to the services.</p><p>If you detach the certificate, it is advised to promptly replace with a new one to maintain access to the Product(s).</p><p>Do you wish to continue?</p>")
   "confirmText" "Remove certificate"
   "confirmClass" "btn-danger"
   "showIcon" true
