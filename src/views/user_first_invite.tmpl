@@ -1,3 +1,7 @@
+{{ $user := CurrentUser req }}
+{{ $canInvite := and $user.HasOrganisation (UserCan $user "create" "team-user") }}
+{{ $inviteTip := "Your role doesn't have permission to invite users" }}
+{{ if not $user.HasOrganisation }}{{ $inviteTip = "Your account isn't part of an organisation" }}{{ end }}
 <div class="private-portal-wrapper">
   <div class="container">
     <div class="card first-invite-card">
@@ -7,10 +11,19 @@
                     Get more work done by inviting someone to collaborate with
                 </p>
                 <div class="mb-3">
+                    {{ if $canInvite }}
                     <a class="btn btn-primary" href="users/invite">
                           <i class="tyk-icon tykon tykon-plus"></i>
                          <span>Invite your first user</span>
                     </a>
+                    {{ else }}
+                    <span class="disabled-control" tabindex="0" data-toggle="tooltip" title="{{ $inviteTip }}">
+                      <a class="btn btn-primary disabled" role="button" aria-disabled="true" tabindex="-1">
+                            <i class="tyk-icon tykon tykon-plus"></i>
+                           <span>Invite your first user</span>
+                      </a>
+                    </span>
+                    {{ end }}
                 </div>
               <p class="text-regular-14 text-default-subdue">
                  OR
