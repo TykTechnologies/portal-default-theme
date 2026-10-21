@@ -7,51 +7,61 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release tag name (e.g., 1.16.0)'
+        description: 'Release tag name (e.g., 1.16.0 or 1.16.0-rc1)'
         required: true
+      dry_run:
+        description: 'Only validate, do not create the tag or release. When disabled, the tag points at the latest commit of the selected branch.'
+        type: boolean
+        default: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   determine-version:
     name: Determine release version
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       version: ${{ steps.extract.outputs.version }}
-      is_manual: ${{ steps.extract.outputs.is_manual }}
+      is_prerelease: ${{ steps.extract.outputs.is_prerelease }}
+      dry_run: ${{ steps.extract.outputs.dry_run }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          fetch-depth: 0
-
       - name: Extract version
         id: extract
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
           TAG_NAME: ${{ github.event.inputs.tag_name }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          BASE_REF: ${{ github.ref_name }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             # Manual workflow execution
             VERSION="$TAG_NAME"
-            echo "is_manual=true" >> $GITHUB_OUTPUT
-            echo "Manual workflow with tag: $VERSION"
+            DRY_RUN="$INPUT_DRY_RUN"
+            echo "Manual workflow with tag: $VERSION (dry run: $DRY_RUN)"
           else
             # Automatic workflow on push to main
-            MERGE_COMMIT_MSG=$(git log -1 --pretty=%s)
-            echo "Merge commit message: $MERGE_COMMIT_MSG"
+            DRY_RUN=false
 
-            # Extract branch name from merge commit message
-            # Format: "Merge pull request #X from TykTechnologies/release-Y.Y.Y"
-            if [[ "$MERGE_COMMIT_MSG" =~ release-([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            # Release PRs are squash-merged, so the commit subject is the PR title
+            # and doesn't contain the branch name. Use the head branch of the PR
+            # that produced this commit instead.
+            HEAD_REF=$(gh api "repos/$REPO/commits/$SHA/pulls" \
+              --jq "[.[] | select(.merged_at != null and .base.ref == \"$BASE_REF\")][0].head.ref // empty")
+            echo "Merged PR head branch: ${HEAD_REF:-<none>}"
+
+            if [[ "$HEAD_REF" =~ ^release-([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)$ ]]; then
               VERSION="${BASH_REMATCH[1]}"
-              echo "is_manual=false" >> $GITHUB_OUTPUT
-              echo "Extracted version from merge: $VERSION"
+              echo "Extracted version from release branch: $VERSION"
             else
               echo "Not a release branch merge, skipping release creation"
-              echo "version=" >> $GITHUB_OUTPUT
-              echo "is_manual=false" >> $GITHUB_OUTPUT
+              echo "version=" >> "$GITHUB_OUTPUT"
               exit 0
             fi
           fi
@@ -63,47 +73,68 @@ jobs:
             exit 1
           fi
 
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Version validated: $VERSION"
+          # Pre-releases (X.Y.Z-suffix) only get a tag, no GitHub release or zip
+          if [[ "$VERSION" == *-* ]]; then
+            IS_PRERELEASE=true
+          else
+            IS_PRERELEASE=false
+          fi
+
+          {
+            echo "version=$VERSION"
+            echo "is_prerelease=$IS_PRERELEASE"
+            echo "dry_run=$DRY_RUN"
+          } >> "$GITHUB_OUTPUT"
+          echo "Version validated: $VERSION (pre-release: $IS_PRERELEASE)"
 
   create-release:
     name: Create release tag
     runs-on: ubuntu-latest
     needs: determine-version
     if: needs.determine-version.outputs.version != ''
+    permissions:
+      contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-
-      - name: Check if tag exists
-        id: check_tag
+      - name: Check existing tag and release
+        id: check
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ needs.determine-version.outputs.version }}
+          REPO: ${{ github.repository }}
         run: |
-          if gh api "/repos/${{ github.repository }}/git/refs/tags/$VERSION" >/dev/null 2>&1; then
-            echo "tag_exists=true" >> $GITHUB_OUTPUT
+          # git/ref (singular) matches exactly; git/refs prefix-matches, so 1.20.0
+          # would be reported as existing when only 1.20.0-rc1 does
+          if gh api "/repos/$REPO/git/ref/tags/$VERSION" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> "$GITHUB_OUTPUT"
             echo "Tag $VERSION already exists"
           else
-            echo "tag_exists=false" >> $GITHUB_OUTPUT
-            echo "Tag $VERSION does not exist, will create"
+            echo "tag_exists=false" >> "$GITHUB_OUTPUT"
+            echo "Tag $VERSION does not exist"
+          fi
+
+          if gh api "/repos/$REPO/releases/tags/$VERSION" >/dev/null 2>&1; then
+            echo "release_exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $VERSION already exists"
+          else
+            echo "release_exists=false" >> "$GITHUB_OUTPUT"
+            echo "Release $VERSION does not exist"
           fi
 
       - name: Create tag
-        if: steps.check_tag.outputs.tag_exists == 'false' && needs.determine-version.outputs.is_manual == 'false'
+        id: create_tag
+        if: needs.determine-version.outputs.dry_run == 'false' && steps.check.outputs.tag_exists == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ needs.determine-version.outputs.version }}
+          REPO: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
-          # Get current commit SHA
-          COMMIT_SHA=$(gh api "/repos/${{ github.repository }}/git/refs/heads/main" --jq .object.sha)
-
           # Create annotated tag
           TAG_SHA=$(gh api \
             --method POST \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/repos/${{ github.repository }}/git/tags" \
+            "/repos/$REPO/git/tags" \
             -f tag="$VERSION" \
             -f message="Release $VERSION" \
             -f object="$COMMIT_SHA" \
@@ -115,14 +146,26 @@ jobs:
             --method POST \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/repos/${{ github.repository }}/git/refs" \
+            "/repos/$REPO/git/refs" \
             -f ref="refs/tags/$VERSION" \
             -f sha="$TAG_SHA"
 
-          echo "Created tag $VERSION"
+          echo "Created tag $VERSION on $COMMIT_SHA"
+
+      # Releases created with GITHUB_TOKEN don't trigger other workflows, so the
+      # App token is needed for create-zip.yml to build and attach the theme zip.
+      - name: Generate GitHub App token
+        id: app-token
+        if: needs.determine-version.outputs.dry_run == 'false' && needs.determine-version.outputs.is_prerelease == 'false' && steps.check.outputs.release_exists == 'false'
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1
+        with:
+          app-id: ${{ secrets.PROBE_APP_ID }}
+          private-key: ${{ secrets.PROBE_APP_PRIVATE_KEY }}
+          owner: TykTechnologies
 
       - name: Create GitHub Release
-        if: steps.check_tag.outputs.tag_exists == 'false' && needs.determine-version.outputs.is_manual == 'false'
+        id: create_release
+        if: steps.app-token.outcome == 'success'
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2
         with:
           tag_name: ${{ needs.determine-version.outputs.version }}
@@ -130,20 +173,77 @@ jobs:
           body: Portal ${{ needs.determine-version.outputs.version }} default theme
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Build Slack message
+        id: summary
+        if: always()
+        env:
+          VERSION: ${{ needs.determine-version.outputs.version }}
+          DRY_RUN: ${{ needs.determine-version.outputs.dry_run }}
+          IS_PRERELEASE: ${{ needs.determine-version.outputs.is_prerelease }}
+          TAG_EXISTS: ${{ steps.check.outputs.tag_exists }}
+          RELEASE_EXISTS: ${{ steps.check.outputs.release_exists }}
+          TAG_OUTCOME: ${{ steps.create_tag.outcome }}
+          RELEASE_OUTCOME: ${{ steps.create_release.outcome }}
+          RELEASE_URL: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.determine-version.outputs.version }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            TITLE="Portal Default Theme Release (Test Run)"
+            TAG_LINE="Tag \`$VERSION\` validated (not created - test mode)"
+            RELEASE_LINE=""
+          else
+            FAILED=false
+
+            if [ "$TAG_OUTCOME" = "success" ]; then
+              TAG_LINE="Tag \`$VERSION\` was created in portal-default-theme"
+            elif [ "$TAG_EXISTS" = "true" ]; then
+              TAG_LINE="Tag \`$VERSION\` already existed in portal-default-theme"
+            else
+              TAG_LINE="Tag \`$VERSION\` could not be created"
+              FAILED=true
+            fi
+
+            if [ "$IS_PRERELEASE" = "true" ]; then
+              RELEASE_LINE="Pre-release: tag only, no GitHub release or theme zip"
+            elif [ "$RELEASE_OUTCOME" = "success" ]; then
+              RELEASE_LINE="Release created: <$RELEASE_URL | $VERSION> (theme zip is attached by the Create SRC Archive workflow)"
+            elif [ "$RELEASE_EXISTS" = "true" ]; then
+              RELEASE_LINE="Release already existed: <$RELEASE_URL | $VERSION>"
+            else
+              RELEASE_LINE="GitHub release could not be created"
+              FAILED=true
+            fi
+
+            if [ "$FAILED" = "true" ]; then
+              TITLE="Portal Default Theme Release Failed"
+            elif [ "$TAG_OUTCOME" = "success" ] || [ "$RELEASE_OUTCOME" = "success" ]; then
+              TITLE="Portal Default Theme Release Created"
+            else
+              TITLE="Portal Default Theme Release Skipped (already exists)"
+            fi
+          fi
+
+          DELIMITER="EOF_$(openssl rand -hex 8)"
+          {
+            echo "message<<$DELIMITER"
+            echo "*$TITLE*"
+            echo
+            echo "$TAG_LINE"
+            [ -n "$RELEASE_LINE" ] && echo && echo "$RELEASE_LINE"
+            echo
+            echo "Triggered by: $ACTOR"
+            echo "Workflow run: $RUN_URL"
+            echo "$DELIMITER"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Send Slack notification
+        if: always() && steps.summary.outcome == 'success'
         uses: slackapi/slack-github-action@6c661ce58804a1a20f6dc5fbee7f0381b469e001 # v1.25.0
         with:
           channel-id: '#team-ext-engineering-pr-notifications'
-          slack-message: |
-            *Portal Default Theme Release ${{ needs.determine-version.outputs.is_manual == 'true' && '(Test Run)' || 'Created' }}*
-
-            Tag `${{ needs.determine-version.outputs.version }}` ${{ needs.determine-version.outputs.is_manual == 'true' && 'validated (not created - test mode)' || 'was created in portal-default-theme' }}
-
-            ${{ needs.determine-version.outputs.is_manual == 'false' && format('Release: <https://github.com/{0}/releases/tag/{1} | {1}>', github.repository, needs.determine-version.outputs.version) || '' }}
-
-            Triggered by: ${{ github.actor }}
-            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          slack-message: ${{ steps.summary.outputs.message }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.UI_SLACK_AUTH_TOKEN }}
