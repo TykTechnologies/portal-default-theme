@@ -61,14 +61,18 @@
     {{ $hasInspector := and $loggedIn (gt (.apiID | trim | length) 0) (gt (default 0 $productID) 0) }}
     <div class="mcp-service-doc mb-5{{ if ne .id $firstId }} d-none{{ end }}" id="mcp-doc-{{ .id }}" data-docs-url="/portal/catalogue-products/{{ $productPath }}/{{ .id }}/docs" data-loaded="{{ if eq .id $firstId }}true{{ else }}false{{ end }}">
 	{{ if $hasInspector }}
-	{{/* Try it: the embedded MCP Inspector SPA, pre-wired at
-	     /portal/catalogue-products/{product-name}/{api}/mcpp/inspector (addressed
-	     by the product slug, a sibling of /docs). Shown by default. The iframe src
-	     is set eagerly for the first service and lazily (data-src) for the rest so
-	     hidden services don't load an Inspector until selected. */}}
+	{{/* Try it: the embedded MCP Inspector SPA, addressed by the product slug as
+	     a sibling of /docs. Shown by default. The iframe src is set eagerly for
+	     the first service and lazily (data-src) for the rest so hidden services
+	     don't load an Inspector until selected.
+
+	     mcp_inspector_path selects V1 (mcpp, which serves the SPA at
+	     .../mcpp/inspector) or V2 (mcpv2, served at the mount root). Both are
+	     always mounted; the setting only picks one. */}}
+	{{ $inspector := mcp_inspector_path }}
 	<div class="mcp-tryit mt-3">
 	    <iframe class="mcp-inspector-frame" title="MCP Inspector: {{ .label }}"
-		{{ if eq .id $firstId }}src{{ else }}data-src{{ end }}="/portal/catalogue-products/{{ $productPath }}/{{ .apiID }}/mcpp/inspector"
+		{{ if eq .id $firstId }}src{{ else }}data-src{{ end }}="/portal/catalogue-products/{{ $productPath }}/{{ .apiID }}/{{ $inspector }}{{ if eq $inspector "mcpp" }}/inspector{{ else }}/{{ end }}"
 		style="width:100%;min-height:800px;border:0;"></iframe>
 	</div>
 	{{ end }}
