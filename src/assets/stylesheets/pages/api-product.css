@@ -20,6 +20,14 @@
   text-decoration: underline;
 }
 
+.api-product-page-wrapper > .container {
+  display: flow-root;
+}
+
+.api-product-page-wrapper > .container > .alert {
+  margin-top: 24px;
+}
+
 .api-product-page-wrapper .alert.alert-success a:not(.btn) {
   color: var(--tdp-alert-success-text-color);
   text-decoration: underline;
