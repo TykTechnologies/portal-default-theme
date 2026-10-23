@@ -16,6 +16,7 @@
 <div class="cart-wrapper">
   <div class="container">
     <p class="mb-3 mt-3"> <a href="/portal/catalogue-products" class="breadcrumb-link">< Back to catalogue overview</a></p>
+    {{ render "messages" . }}
     {{ if .errors }}
       {{ range $key, $errs := .errors }}
         <div class="alert alert-warning cart-error" role="alert">
@@ -40,17 +41,51 @@
         </p>
       </div>
     {{ else }}
-      {{if eq $catalogueCount 0}}
+      {{ if and .cart_state (ne .cart_state "partial") }}
+        <h1 class="mb-4 heading-xlarge text-center mt-5">Cart - Submit an access request</h1>
+        <div class="cart-wrapper__card-section">
+          <div class="alert alert-warning" role="alert">
+            <i class="tyk-icon tykon tykon-warning "></i>
+            <div class="alert__content">
+              {{ if eq .cart_state "corrupted" }}
+                <strong>We couldn't load your cart</strong>
+                <p class="mb-0">Something went wrong. Please clear your cart or contact support if the issue persists.</p>
+              {{ else }}
+                <strong>The products in this cart are no longer available</strong>
+                <p class="mb-0">They have been removed from the catalogue or are no longer accessible to your organisation. Clear the cart to start a new access request.</p>
+              {{ end }}
+            </div>
+          </div>
+          <form method="POST" action="/portal/private/cart/clear" class="cart-recovery__actions">
+            <button type="submit" class="btn btn-primary">Clear cart</button>
+            <a class="btn btn-secondary-outline" href="/portal/catalogue-products">Browse catalogues</a>
+          </form>
+        </div>
+      {{ else if eq $catalogueCount 0}}
         <div class="empty-cart-wrapper text-center mt-5">
           <h1 class="heading-large">Your cart is empty</h1>
           <p class="text-regular-14">
             Go the <a href="/portal/catalogue-products" class="breadcrumb-link">catalogues</a> and browse products.
+          </p>
+          <p>
+            <a class="btn btn-primary" href="/portal/catalogue-products">Browse catalogues</a>
           </p>
         </div>
       {{else}}
         <h1 class="mb-4 heading-xlarge text-center mt-5">
           {{ if not $isDirectCheckout }}Cart - {{ end }}Submit an access request
         </h1>
+        {{ if eq .cart_state "partial" }}
+          <div class="cart-wrapper__card-section">
+            <div class="alert alert-warning" role="alert">
+              <i class="tyk-icon tykon tykon-warning "></i>
+              <div class="alert__content">
+                <strong>Some products in your cart are no longer available</strong>
+                <p class="mb-0">Remove them to continue with your access request.</p>
+              </div>
+            </div>
+          </div>
+        {{ end }}
       {{end}}
       {{ if gt $catalogueCount 1 }}
         <div class="cart-wrapper__card-section">
@@ -90,7 +125,23 @@
                         {{ end }}
                       </li>
                     {{ end }}
+                    {{ range $request.UnavailableProducts }}
+                      <li class="list-group-item product-unavailable">
+                        <span class="product-name">{{ if .Name }}{{ .Name }}{{ else }}Product no longer available{{ end }}</span>
+                        <span class="badge badge-api-type product-unavailable__badge">This product has been removed or is no longer accessible</span>
+                        {{ if not $isDirectCheckout }}
+                        <a class="product-remove-cta" type="button" href="/portal/private/cart/remove/{{$index}}/{{.ID}}" title="Remove from cart">
+                          <i class="tyk-icon tykon tykon-delete"></i>
+                        </a>
+                        {{ end }}
+                      </li>
+                    {{ end }}
                   </ul>
+                  {{ if and $request.UnavailableProducts (not $isDirectCheckout) }}
+                    <button type="submit" class="btn btn-primary product-unavailable__remove-all" formaction="/portal/private/cart/remove-unavailable" formmethod="post" formnovalidate>
+                      <i class="tyk-icon tykon tykon-delete"></i> Remove all unavailable products
+                    </button>
+                  {{ end }}
                 </div>
               </div>
             </div>
@@ -507,7 +558,13 @@
 
             <div class="text-center mt-4 mb-5">
               {{ if $request.Products }}
-                <button type="submit" class="btn btn-primary">Submit request</button>
+                {{ if $request.UnavailableProducts }}
+                  <span class="disabled-control" tabindex="0" data-toggle="tooltip" title="Remove the unavailable products to submit the request">
+                    <button type="submit" class="btn btn-primary" disabled>Submit request</button>
+                  </span>
+                {{ else }}
+                  <button type="submit" class="btn btn-primary">Submit request</button>
+                {{ end }}
               {{ end}}
             </div>
           </form>
