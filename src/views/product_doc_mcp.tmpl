@@ -27,16 +27,21 @@
             <button type="button" class="mcp-view-btn" data-view="instructions">Instructions</button>
           </div>
         </div>
-        {{/* Try it: the embedded MCP Inspector SPA, pre-wired at
-             /portal/catalogue-products/{product-name}/{api}/mcpp/inspector — the
-             SPA framed with the proxy address, session token, upstream URL and
-             transport already seeded. Addressed by the product slug, a sibling of
-             the product's /docs page (like the OAS/GraphQL viewers). Shown by
-             default. */}}
+        {{/* Try it: the embedded MCP Inspector SPA, addressed by the product slug
+             as a sibling of the product's /docs page (like the OAS/GraphQL
+             viewers). Shown by default.
+
+             mcp_inspector_path selects which Inspector to frame. V1 (mcpp)
+             serves the SPA at .../mcpp/inspector, framed with the proxy address,
+             session token, upstream URL and transport already seeded. V2
+             (mcpv2) serves it at the mount root and learns everything from the
+             backend, so it takes no /inspector suffix. Both are always mounted;
+             the setting only picks one. */}}
+        {{ $inspector := mcp_inspector_path }}
         <div class="mcp-tryit">
           <iframe class="mcp-inspector-frame"
                   title="MCP Inspector"
-                  src="/portal/catalogue-products/{{ .product.Path }}/{{ .APIID }}/mcpp/inspector"></iframe>
+                  src="/portal/catalogue-products/{{ .product.Path }}/{{ .APIID }}/{{ $inspector }}{{ if eq $inspector "mcpp" }}/inspector{{ else }}/{{ end }}"></iframe>
         </div>
         {{ end }}
         {{/* Instructions: the operator-authored markdown. Hidden by default when

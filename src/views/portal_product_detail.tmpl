@@ -57,14 +57,18 @@
     <div class="container">
 	{{ if .errors }}
 	<div class="alert alert-danger" role="alert">
+	    <i class="tyk-icon tykon tykon-warning "></i>
+	    <div class="alert__content">
 	    {{ range $category, $messages := .errors }}
-            <i class="tyk-icon tykon tykon-warning "></i>
-            {{ range $i, $message := $messages }}
-            <br/>
-            <div class="alert__content">{{ $message }}</div>
-            {{ end }}
+	        {{ range $i, $message := $messages }}
+	        <div>{{ $message }}</div>
+	        {{ end }}
+	    {{ end }}
+	    {{ if .show_cart_link }}
+	        <a href="/portal/private/cart/provision" class="alert-link">View cart</a>
+	    {{ end }}
+	    </div>
 	</div>
-	{{end}}
 	{{ end }}
 	{{ if .added }}
 	<div class="alert alert-success" role="alert">
