@@ -246,6 +246,18 @@ button:focus {
   cursor: not-allowed;
   opacity: 0.7;
 }
+
+.btn-primary.disabled,
+.btn-primary:disabled {
+	background-color: var(--tdp-primary-btn-color);
+	border-color: var(--border-brand-default);
+}
+
+.disabled-control {
+  display: inline-block;
+  cursor: not-allowed;
+}
+
 .btn-edit-user-detail {
 	margin-right: -20px;
 	background-color: transparent;
