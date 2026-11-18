@@ -196,7 +196,7 @@
 				{{if not (eq $api.Description "")}}
 				<div class="mb-3">
 				    <span class="m-0 body-large-bold">Description:</span>
-				    <p class="api-description-text text-regular-14 m-0" data-description="{{$api.Description}}">{{safe (TruncateString $api.Description 60)}}</p>
+				    <p class="api-description-text text-regular-14 m-0" data-description="{{$api.Description}}">{{TruncateString $api.Description 60}}</p>
 				</div>
 				{{end}}
 				<div class="mb-3">
